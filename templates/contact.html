@@ -1,0 +1,36 @@
+{% extends "accueil.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block sidemenu %}
+<!-- not used. -->
+{% endblock %}
+{% block body %}
+<div class="container-fluid">
+      <div class="row">
+	<form>
+	   <div class="form-group">
+	      <label for="inputEmail">Email address</label>
+	      <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" required autofocus>
+	      <small id="emailHelp" class="form-text text-muted">We'll answer to the informed email.</small>
+	   </div>
+	   <div class="form-group">
+	      <label for="inputSubject">Subject</label>
+	      <input type="email" class="form-control" id="inputSubject" placeholder="Subject" required>
+	   </div>
+
+	   <div class="form-group">
+              <label for="formControlMessage">Message</label>
+              <textarea class="form-control" id="formControlMessage" rows="8" placeholder="Leave your message" required></textarea>
+           </div>
+           <button type="submit" class="btn btn-outline-secondary">Submit</button>
+           </form>
+      </div>
+</div>
+{% endblock %}
+
+

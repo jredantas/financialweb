@@ -1,0 +1,43 @@
+{% extends "accueil.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block sidemenu %}
+<!-- not used. -->
+{% endblock %}
+{% block body %}
+<div class="container-fluid">
+      <div class="row">
+	<form action="">
+	   <div class="form-group">
+	      <label for="inputName">Name</label>
+	      <input type="text" class="form-control" id="inputName" placeholder="Your name" required autofocus>
+	   </div>
+	   <div class="form-group">
+	      <label for="inputCompany">Company</label>
+	      <input type="text" class="form-control" id="inputCompany" placeholder="Your company" required>
+	   </div>
+	   <div class="form-group">
+	      <label for="inputEmail">Email address</label>
+	      <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" required>
+	      <!--<small id="emailHelp" class="form-text text-muted">We'll answer to the informed email.</small>-->
+	   </div>
+	   <div class="form-group">
+              <label for="inputPassword1" class="sr-only">Enter password</label>
+              <input type="password" id="inputPassword1" class="form-control" placeholder="Password" required>
+	   </div>
+	   <div class="form-group">
+              <label for="inputPassword2" class="sr-only">Repeat password</label>
+              <input type="password" id="inputPassword2" class="form-control" placeholder="Repeat password" required>
+	   </div>
+           <button type="submit" class="btn btn-outline-secondary">Submit</button>
+           </form>
+      </div>
+</div>
+{% endblock %}
+
+
