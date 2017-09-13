@@ -15,28 +15,43 @@ app = Flask(__name__)
 #Preambule section
 @app.route('/')
 def accueil():
+    if 'username' in session:
+       return render_template('accueil.html', titre='Financial web', username=session['username'])
     return render_template('accueil.html', titre='Financial web')
 
 @app.route('/contact')
 def contact():
     return render_template('contact.html', titre='Financial web - Contact us')
 
+@app.route('/under_construction')
+def under_construction():
+    return render_template('under_construction.html', titre='Financial web')
+
+#AUthentication section
 @app.route('/signup')
 def signup():
     return render_template('signup.html', titre='Financial web - Sign up')
 
-#AUthentication section
+@app.route('/profile')
+def profile():
+    print session
+    return redirect(url_for('under_construction'))
+    #return render_template('profile.html', titre='Financial web - User profile')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        session['username'] = request.form['username']
-        return redirect(url_for('index'))
-    return render_template('login.html', titre='Financial Web - Login')
+    username = request.form['username']
+    if request.method == 'POST' and username == 'admin':
+        session['username'] = username
+        session['logged_in'] = True
+        return redirect(url_for('accueil'))
+    return render_template('accueil.html', titre='Financial Web', alert='Username or password not correct.')
 
 @app.route('/logout')
 def logout():
     # remove the username from the session if it's there
     session.pop('username', None)
+    session.pop('logged_in', False)
     return redirect(url_for('accueil'))
 
 #CRUD section

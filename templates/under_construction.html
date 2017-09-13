@@ -1,0 +1,20 @@
+{% extends "accueil.html" %}
+{% block title %}Login{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block sidemenu %}
+{% endblock %}
+{% block body %}
+   <div class="container-fluid">
+      <div class="row">
+         <img src="{{url_for('static', filename='images/under-construction.jpg')}}" />
+      </div>
+   </div>
+
+{% endblock %}
+
+
