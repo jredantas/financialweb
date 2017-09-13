@@ -56,7 +56,7 @@
            <ul class="navbar-nav">
      	     <li class="nav-item dropdown">
 	       <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-	          You are logged in as {{ session['username'] }}.
+	          You are logged in as <span class="text-warning">{{ session['username'] }}</span>
 	       </a>
 	       <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
 	          <a class="dropdown-item" href="{{ url_for('profile', instance='Profile')}}">Profile</a>
@@ -78,8 +78,8 @@
 
              <p/>
 	     <div id="content">{% block sidemenu %}{% endblock %}</div>
-             <p class="alert">{{alert}}</p>
-             <p class="yield">{{yield}}</p>
+             <p class="text-danger">{{alert}}</p>
+             <p class="text-warning">{{yield}}</p>
 
     
              <p class="text">

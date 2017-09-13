@@ -34,7 +34,8 @@ def signup():
 
 @app.route('/profile')
 def profile():
-    print session
+    if len(session) == 0:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     return redirect(url_for('under_construction'))
     #return render_template('profile.html', titre='Financial web - User profile')
 
@@ -58,23 +59,33 @@ def logout():
 @app.route('/list/<instance>')
 def hall(instance):
     #instance = request.args.get('instance')
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     messages = ['um','dois','tres','quatro','5','6','7','8','9','10','11','12']
     return render_template('list.html', titre='Financial web - '+instance, section_titre=instance, elements=messages)
 
 @app.route('/insert/<instance>')
 def insert(instance):
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     return render_template('insert.html', titre='Financial web - '+instance, section_titre=instance)
 
 @app.route('/show/<instance>/<id>')
 def show(instance, id):
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     return render_template('show.html', titre='Financial web - '+instance, section_titre=instance)
 
 @app.route('/remove/<instance>/<id>')
 def remove(instance, id):
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     return render_template('remove.html', titre='Financial web - '+instance, section_titre=instance)
 
 @app.route('/update/<instance>/<id>')
 def update(instance, id):
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     return render_template('update.html', titre='Financial web - '+instance, section_titre=instance)
 
 
