@@ -12,23 +12,22 @@
 {% block body %}
 <div class="container-fluid">
       <div class="row">
-	<form>
+	<form action="" method="post">
+	   <div class="form-group">
+	      <label for="inputSubject">Name</label>
+	      <input type="email" class="form-control" id="inputName" placeholder="Subject" required>
+	   </div>
 	   <div class="form-group">
 	      <label for="inputEmail">Email address</label>
 	      <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" required autofocus>
 	      <small id="emailHelp" class="form-text text-muted">We'll answer to the informed email.</small>
 	   </div>
 	   <div class="form-group">
-	      <label for="inputSubject">Subject</label>
-	      <input type="email" class="form-control" id="inputSubject" placeholder="Subject" required>
-	   </div>
-
-	   <div class="form-group">
               <label for="formControlMessage">Message</label>
               <textarea class="form-control" id="formControlMessage" rows="8" placeholder="Leave your message" required></textarea>
            </div>
            <button type="submit" class="btn btn-outline-secondary">Submit</button>
-           </form>
+        </form>
       </div>
 </div>
 {% endblock %}
