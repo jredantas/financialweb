@@ -10,3 +10,5 @@ create table contact (
   email VARCHAR(100) NOT NULL,
   message VARCHAR(500) NOT NULL
 );
+
+GRANT INSERT ON contact TO 'admin'@'localhost';

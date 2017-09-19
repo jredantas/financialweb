@@ -10,8 +10,9 @@ created in 2017-09-11
 from flask import Flask, g
 from flask import render_template, url_for
 from flask import request, session, redirect
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, Table, MetaData
 from sqlalchemy.orm import sessionmaker
+from contact import Contact
 
 app = Flask(__name__)
 
@@ -28,18 +29,19 @@ app.config.update(dict(
 # set the secret key.  keep this really secret:
 app.secret_key = app.config.get('SECRET_KEY')
 
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'+app.config.get('USERNAME')+':'+app.config.get('PASSWORD')+'@localhost:3306/' #+app.config.get('DATABASE')
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'+app.config.get('USERNAME')+':'+app.config.get('PASSWORD')+'@localhost:3306/'+app.config.get('DATABASE')
 
 #DBA section
-def connect_db():
+def connect_db(conn_string=SQLALCHEMY_DATABASE_URI):
     """Connects to the specific database."""
-    db = create_engine(SQLALCHEMY_DATABASE_URI)
+    db = create_engine(conn_string)
     db.echo = False
     return db
 
 def init_db():
     """Initializes the database."""
-    db = get_db()
+    INIT_DATABASE_URI = 'mysql+pymysql://'+app.config.get('USERNAME')+':'+app.config.get('PASSWORD')+'@localhost:3306/'
+    db = get_db(INIT_DATABASE_URI)
     
     Session = sessionmaker(bind=db)
     session = Session()
@@ -70,12 +72,12 @@ def init_db():
                 finally:
                     sql_command = ''
 
-def get_db():
+def get_db(conn_string=SQLALCHEMY_DATABASE_URI):
     """Opens a new database connection if there is none yet for the
     current application context.
     """
     if not hasattr(g, 'sql_db'):
-        g.sql_db = connect_db()
+        g.sql_db = connect_db(conn_string)
     return g.sql_db
 
 @app.cli.command('initdb')
@@ -169,7 +171,19 @@ def update(instance, id):
 #Model section
 @app.route('/contact/add', methods=['POST'])
 def insert_contact():
-    #do something here
+    if request.method == 'POST':
+        try:
+            db = get_db()
+            Session = sessionmaker(bind=db)
+            session = Session()
+            contact = Contact(request.form['inputName'], request.form['inputEmail'], request.form['formControlMessage'])
+            session.add(contact)
+            session.commit()
+            print('Contact inserted.')
+            return render_template('accueil.html', titre='Financial Web', alert='Contact registered. Thank you.')
+        except Exception as err:
+            print(err)
+            return render_template('accueil.html', titre='Financial Web', alert='Contact not registered. Try again.')
 
 if __name__ == '__main__':
 

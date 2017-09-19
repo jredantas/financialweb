@@ -12,19 +12,19 @@
 {% block body %}
 <div class="container-fluid">
       <div class="row">
-	<form action="" method="post">
+	<form action="{{url_for('insert_contact')}}" method="post">
 	   <div class="form-group">
 	      <label for="inputSubject">Name</label>
-	      <input type="email" class="form-control" id="inputName" placeholder="Subject" required>
+	      <input type="text" class="form-control" name="inputName" placeholder="Your name" required autofocus>
 	   </div>
 	   <div class="form-group">
 	      <label for="inputEmail">Email address</label>
-	      <input type="email" class="form-control" id="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" required autofocus>
+	      <input type="email" class="form-control" name="inputEmail" aria-describedby="emailHelp" placeholder="Enter email" required>
 	      <small id="emailHelp" class="form-text text-muted">We'll answer to the informed email.</small>
 	   </div>
 	   <div class="form-group">
               <label for="formControlMessage">Message</label>
-              <textarea class="form-control" id="formControlMessage" rows="8" placeholder="Leave your message" required></textarea>
+              <textarea class="form-control" name="formControlMessage" rows="8" placeholder="Leave your message" required></textarea>
            </div>
            <button type="submit" class="btn btn-outline-secondary">Submit</button>
         </form>
