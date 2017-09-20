@@ -41,9 +41,32 @@ create table expense (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   company VARCHAR(100) NOT NULL,
   due_date TIMESTAMP NOT NULL,
-  amount DECIMAL(5,2) NOT NULL,
+  amount DECIMAL(9,2) NOT NULL,
   installment_group INT NULL,
   installment INT NULL,
   account_id INT NULL
 );
+
+drop table if exists income;
+create table income (
+  id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+  company VARCHAR(100) NOT NULL,
+  pay_date TIMESTAMP NOT NULL,
+  amount DECIMAL(9,2) NOT NULL,
+  description VARCHAR(100) NULL,
+  type INT NULL,
+  account_id INT NULL
+);
+
+INSERT INTO expense(company, due_date, amount, installment_group, installment, account_id) 
+VALUES ('Coelce','20171005',212.35,0,1,1);
+INSERT INTO expense(company, due_date, amount, installment_group, installment, account_id) 
+VALUES ('Cagece','20171001',78.56,0,1,1);
+INSERT INTO expense(company, due_date, amount, installment_group, installment, account_id) 
+VALUES ('Vivo','20171017',98.00,0,1,2);
+
+INSERT INTO income(company, pay_date, amount, account_id) 
+VALUES ('SERPRO','20170930',8200.00,1);
+INSERT INTO income(company, pay_date, amount, account_id) 
+VALUES ('DAG','20171001',7500.00,2);
 

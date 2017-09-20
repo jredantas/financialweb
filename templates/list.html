@@ -39,7 +39,7 @@
                   <th>Company</th>
                   <th>Due date</th>
                   <th>Amount</th>
-                  <th>Installment</th>
+                  <th>Account</th>
                   <th></th>
                   <th></th>
                   <th></th>
@@ -48,10 +48,10 @@
               <tbody>
 	        {% for element in elements %}
                 <tr>
-                  <td>{{ element }}</td>
-                  <td>{{ element }}</td>
-                  <td>{{ element }}</td>
-                  <td>{{ element }}</td>
+                  <td>{{ element[0] }}</td>
+                  <td>{{ element[1].strftime('%d/%m/%Y') }}</td>
+                  <td><span class="float-right">{{ element[2] }}</span></td>
+                  <td><div class="col text-center">{{ element[3] }}</div></td>
         	  <td><a href="{{ url_for('accueil', titre='Financial Web - show')}}">Show</a></td>
 	          <td><a href="{{ url_for('accueil', titre='Financial Web - edit')}}">Edit</a></td>
 	          <td><a href="{{ url_for('accueil', titre='Financial Web - remove')}}">Remove</a></td>

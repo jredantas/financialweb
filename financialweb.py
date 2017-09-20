@@ -10,9 +10,15 @@ created in 2017-09-11
 from flask import Flask, g
 from flask import render_template, url_for
 from flask import request, session, redirect
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.sql import select
+from sqlalchemy import MetaData, Column, Table, ForeignKey
+from sqlalchemy import column
+
 from contact import Contact
+#from expense import Expense
 
 app = Flask(__name__)
 
@@ -141,8 +147,27 @@ def hall(instance):
     #instance = request.args.get('instance')
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
-    messages = ['um','dois','tres','quatro','5','6','7','8','9','10','11','12']
+    
+    messages = []
+    try:
+        db = get_db()
+        metadata = MetaData(bind=db)
+        instance = Table(str(instance), metadata, autoload=True, schema="nobdan")
+        columns = []
+        for key in instance.c.keys():
+            columns.append(key)
+        s = select([instance.c.column(columns[1]), instance.c.column(columns[2]), instance.c.column(columns[3]), instance.c.column(columns[6])])
+        result = s.execute()
+        for row in result:
+            messages.append(row)
+    except Exception as err:
+        print(err)
+        return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
+    
     return render_template('list.html', titre='Financial web - '+instance, section_titre=instance, elements=messages)
+    
+    
+    
 
 @app.route('/insert/<instance>')
 def insert(instance):
