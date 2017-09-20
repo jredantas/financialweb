@@ -10,7 +10,7 @@ created in 2017-09-11
 from flask import Flask, g
 from flask import render_template, url_for
 from flask import request, session, redirect
-from sqlalchemy import create_engine, Table, MetaData
+from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from contact import Contact
 
