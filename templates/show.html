@@ -15,13 +15,13 @@
               <a class="nav-link active" href="#">Options <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">New</a>
+              <a class="nav-link" href="{{ url_for('under_construction')}}">New</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Back</a>
+              <a class="nav-link" href="javascript: history.back()">Back</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Export</a>
+              <a class="nav-link" href="{{ url_for('under_construction')}}">Export</a>
             </li>
           </ul>
 	</nav>
@@ -30,39 +30,18 @@
 {% endblock %}
 {% block body %}
 <div class="container-fluid">
-   <h2 class="form-signin-heading">{{section_titre}}</h2>
+   <h2 class="form-signin-heading">{{instance}}</h2>
    <div class="row">
-          <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Descrição</th>
-                  <th>Valor</th>
-                  <th>Renato pagou</th>
-                  <th>Adrianna pagou</th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-	        {% for message in messages %}
-                <tr>
-                  <td>{{ message }}</td>
-                  <td>{{ message }}</td>
-                  <td>{{ message }}</td>
-                  <td>{{ message }}</td>
-        	  <td><a href="{{ url_for('accueil', titre='Financial Web - show')}}">Show</a></td>
-	          <td><a href="{{ url_for('accueil', titre='Financial Web - edit')}}">Edit</a></td>
-	          <td><a href="{{ url_for('accueil', titre='Financial Web - remove')}}">Remove</a></td>
-	        </tr>
-		{% endfor %}
-              </tbody>
-            </table>
-          </div><!-- /table -->
+      <nav>
+         {% for element in elements %}
+	    {% if element[1]|datetime %} 
+               <p class="text"><span class="font-weight-bold">{{ element[0] }}</span>: {{ element[1].strftime('%d/%m/%Y') }}</p>
+            {% else %} 
+               <p class="text"><span class="font-weight-bold">{{ element[0] }}</span>: {{ element[1] }}</p>
+            {% endif %}
+         {% endfor %}
+      </nav>
    </div><!-- /row -->
-	<!--<button type="button" class="btn btn-link">New</button>
-	<button type="button" class="btn btn-link">Back</button>-->
 </div> <!-- /container -->
 
 {% endblock %}

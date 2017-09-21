@@ -115,12 +115,7 @@ def datetime_filter(d): # date = datetime object.
     except:
         return False
 
-"""
-                  <!--<td>{{ element[1].strftime('%d/%m/%Y') }}</td>
-                  <td><span class="float-right">{{ element[2] }}</span></td>
-                  <td><div class="col text-center">{{ element[3] }}</div></td>-->
-
-"""        
+      
 #Preambule section
 @app.route('/')
 def accueil():
@@ -165,6 +160,17 @@ def logout():
     return redirect(url_for('accueil'))
 
 #CRUD section
+def get_labels(table):
+    columns = []
+    columnsStr = ''
+    for i, key in enumerate(table.c.keys()):
+        columns.append(key)
+        columnsStr += key
+        if i != len(table.c.keys()) -1:
+            columnsStr += ', '
+    columns = tuple(columns)
+    return columns
+
 @app.route('/list/<instance>')
 def hall(instance):
     if session.get('logged_in') != True:
@@ -176,28 +182,33 @@ def hall(instance):
         Session = sessionmaker(bind=db)
         sessiondb = Session()
         table = Table(str(instance), metadata, autoload=True)
-        columns = []
-        columnsStr = ''
-        for i, key in enumerate(table.c.keys()):
-            columns.append(key)
-            columnsStr += key
-            if i != len(table.c.keys()) -1:
-                columnsStr += ', '
-        columns = tuple(columns)
-        sql = "SELECT {0} FROM {1}".format(columnsStr, table)
-        result = sessiondb.query(*columns).from_statement(sql).all()
-        print(result)
+        labels = get_labels(table)
+        result = sessiondb.query(table).all()
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
     
-    return render_template('list.html', titre='Financial web - '+instance, section_titre=instance, elements=result, columns=columns)
+    return render_template('list.html', titre='Financial web - '+instance, instance=instance, elements=result, columns=labels)
     
 @app.route('/show/<instance>/<id>')
 def show(instance, id):
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
-    return render_template('show.html', titre='Financial web - '+instance, section_titre=instance)
+
+    try:
+        db = get_db()
+        metadata = MetaData(bind=db)
+        Session = sessionmaker(bind=db)
+        sessiondb = Session()
+        table = Table(str(instance), metadata, autoload=True)
+        labels = get_labels(table)
+        result = sessiondb.query(table).filter(table.columns.id == id).first()
+        elements = zip(labels, result)
+    except Exception as err:
+        print(err)
+        return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
+    
+    return render_template('show.html', titre='Financial web - '+instance,  instance=instance, elements=elements)
 
 @app.route('/insert/<instance>')
 def insert(instance):
