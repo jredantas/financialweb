@@ -13,9 +13,9 @@ from flask import request, session, redirect
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.sql import select
-from sqlalchemy import MetaData, Column, Table, ForeignKey
-from sqlalchemy import column
+from sqlalchemy import MetaData, Table
+
+#from datetime import datetime
 
 from contact import Contact
 #from expense import Expense
@@ -98,6 +98,29 @@ def close_db(error):
     if hasattr(g, 'sql_db'):
         g.sql_db.dispose()
 
+#Custom filters section
+@app.template_filter('number')
+def number_filter(s):
+    try:
+        float(s)
+        return True
+    except:
+        return False
+
+@app.template_filter('datetime')
+def datetime_filter(d): # date = datetime object.
+    try:
+        d.strftime('%d/%m/%Y')
+        return True
+    except:
+        return False
+
+"""
+                  <!--<td>{{ element[1].strftime('%d/%m/%Y') }}</td>
+                  <td><span class="float-right">{{ element[2] }}</span></td>
+                  <td><div class="col text-center">{{ element[3] }}</div></td>-->
+
+"""        
 #Preambule section
 @app.route('/')
 def accueil():
@@ -144,42 +167,43 @@ def logout():
 #CRUD section
 @app.route('/list/<instance>')
 def hall(instance):
-    #instance = request.args.get('instance')
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     
-    messages = []
     try:
         db = get_db()
         metadata = MetaData(bind=db)
-        instance = Table(str(instance), metadata, autoload=True, schema="nobdan")
+        Session = sessionmaker(bind=db)
+        sessiondb = Session()
+        table = Table(str(instance), metadata, autoload=True)
         columns = []
-        for key in instance.c.keys():
+        columnsStr = ''
+        for i, key in enumerate(table.c.keys()):
             columns.append(key)
-        s = select([instance.c.column(columns[1]), instance.c.column(columns[2]), instance.c.column(columns[3]), instance.c.column(columns[6])])
-        result = s.execute()
-        for row in result:
-            messages.append(row)
+            columnsStr += key
+            if i != len(table.c.keys()) -1:
+                columnsStr += ', '
+        columns = tuple(columns)
+        sql = "SELECT {0} FROM {1}".format(columnsStr, table)
+        result = sessiondb.query(*columns).from_statement(sql).all()
+        print(result)
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
     
-    return render_template('list.html', titre='Financial web - '+instance, section_titre=instance, elements=messages)
+    return render_template('list.html', titre='Financial web - '+instance, section_titre=instance, elements=result, columns=columns)
     
-    
-    
+@app.route('/show/<instance>/<id>')
+def show(instance, id):
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
+    return render_template('show.html', titre='Financial web - '+instance, section_titre=instance)
 
 @app.route('/insert/<instance>')
 def insert(instance):
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     return render_template('insert.html', titre='Financial web - '+instance, section_titre=instance)
-
-@app.route('/show/<instance>/<id>')
-def show(instance, id):
-    if session.get('logged_in') != True:
-        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
-    return render_template('show.html', titre='Financial web - '+instance, section_titre=instance)
 
 @app.route('/remove/<instance>/<id>')
 def remove(instance, id):

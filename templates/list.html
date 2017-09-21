@@ -36,10 +36,9 @@
             <table class="table table-striped">
               <thead>
                 <tr>
-                  <th>Company</th>
-                  <th>Due date</th>
-                  <th>Amount</th>
-                  <th>Account</th>
+ 	          {% for column in columns %}
+                     <th>{{ column }}</th>
+  		  {% endfor %}
                   <th></th>
                   <th></th>
                   <th></th>
@@ -48,10 +47,17 @@
               <tbody>
 	        {% for element in elements %}
                 <tr>
-                  <td>{{ element[0] }}</td>
-                  <td>{{ element[1].strftime('%d/%m/%Y') }}</td>
-                  <td><span class="float-right">{{ element[2] }}</span></td>
-                  <td><div class="col text-center">{{ element[3] }}</div></td>
+                  {% for i in range(element|length) %}
+                     {% if element[i]|datetime %} 
+                        <td>{{ element[i].strftime('%d/%m/%Y') }}</td>
+                     {% else %} 
+                        {% if element[i]|number %}
+                            <td><span class="float-right">{{ element[i] }}</span></td>
+                        {% else %}
+                            <td>{{ element[i] }}</td>
+                        {% endif %}
+                     {% endif %}
+                  {% endfor %}
         	  <td><a href="{{ url_for('accueil', titre='Financial Web - show')}}">Show</a></td>
 	          <td><a href="{{ url_for('accueil', titre='Financial Web - edit')}}">Edit</a></td>
 	          <td><a href="{{ url_for('accueil', titre='Financial Web - remove')}}">Remove</a></td>
