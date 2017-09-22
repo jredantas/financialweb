@@ -214,7 +214,18 @@ def show(instance, id):
 def insert(instance):
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
-    return render_template('insert.html', titre='Financial web - '+instance, section_titre=instance)
+
+    try:
+        db = get_db()
+        metadata = MetaData(bind=db)
+        table = Table(str(instance), metadata, autoload=True)
+        labels = get_labels(table)
+        elements = zip(labels, table.columns)
+    except Exception as err:
+        print(err)
+        return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
+
+    return render_template('insert.html', titre='Financial web - '+instance, instance=instance, columns=elements)
 
 @app.route('/remove/<instance>/<id>')
 def remove(instance, id):
@@ -244,6 +255,15 @@ def insert_contact():
         except Exception as err:
             print(err)
             return render_template('accueil.html', titre='Financial Web', alert='Contact not registered. Try again.')
+
+@app.route('/insert/add', methods=['POST'])
+def insert_save():
+    if request.method == 'POST':
+        try:
+            return render_template('under_construction.html', titre='Financial Web', alert='Operation not available.')
+        except Exception as err:
+            print(err)
+            return render_template('accueil.html', titre='Financial Web', alert='It was not possible to insert the record. Try again.')
 
 if __name__ == '__main__':
 
