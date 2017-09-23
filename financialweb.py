@@ -220,7 +220,9 @@ def insert(instance):
         metadata = MetaData(bind=db)
         table = Table(str(instance), metadata, autoload=True)
         labels = get_labels(table)
-        elements = zip(labels, table.columns)
+        primaryKeyColName = table.primary_key.columns.values()[0].name
+        labels, columns = zip(*filter(lambda x: primaryKeyColName not in x, zip(labels,table.columns)))
+        elements = zip(labels, columns)
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
