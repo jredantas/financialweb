@@ -30,7 +30,23 @@
 {% endblock %}
 {% block body %}
 <div class="container-fluid">
-   <h2 class="form-signin-heading">{{instance}}</h2>
+   <div class="row">
+      <div class="col-sm-6">
+         <h2 class="form-signin-heading">{{instance.title()}}</h2>
+      </div>
+      <div class="col-sm-6 my-auto text-right">
+         <div class="dropdown">
+            <button class="btn btn-light btn-sm align-middle dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               Filter by Month/Year
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+               <a class="dropdown-item" href="#">Action</a>
+               <a class="dropdown-item" href="#">Another action</a>
+               <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+         </div>
+      </div>
+   </div>
    <div class="row">
           <div class="table-responsive">
             <table class="table table-striped">

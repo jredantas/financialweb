@@ -25,29 +25,29 @@
 {% endblock %}
 {% block body %}
 <div class="container-fluid">
-      <div class="row">
-
-	<form action="{{url_for('insert_save')}}" method="post">
-	   <!--<div class="form-group">
-	      <label for="inputSubject">Teste</label>
-	      <input type="text" class="form-control" name="inputName" placeholder="Your name" required autofocus>
-	   </div>-->
-
-
-            {% for column in columns %}
+   <div class="row">
+      <div class="col-sm-6">
+         <h2 class="form-signin-heading">{{instance.title()}}</h2>
+       </div>
+       <div class="col-sm-6 my-auto text-right">
+       </div>
+   </div>
+   <div class="row">
+	<form action="{{url_for('insert_add', instance=instance)}}" method="post">
+	   {% for column in columns %}
 		      <div class="form-group">
 		         <label for="inputSubject">{{column[0]}}</label>
-                         {% if not column[1].nullable %}
-		            <input type="text" class="form-control" name="{{column[1]}}" required>
+                         {% if str(column[1].type) == 'TIMESTAMP' %}
+		            <input class="form-control" type="date" name="{{column[1].name}}" {% if not column[1].nullable %} required {% endif %} >
                          {% else %}
-		            <input type="text" class="form-control" name="{{column[1]}}">
+		            <input class="form-control" type="text" name="{{column[1].name}}" {% if not column[1].nullable %} required {% endif %} >
                          {% endif %}
 		      </div>
             {% endfor %}
 
            <button type="submit" class="btn btn-outline-secondary">Submit</button>
         </form>
-      </div>
+   </div>
 </div>
 {% endblock %}
 

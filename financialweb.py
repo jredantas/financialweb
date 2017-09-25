@@ -13,9 +13,12 @@ from flask import request, session, redirect
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import MetaData, Table
+from sqlalchemy import MetaData, Table, DateTime
+from sqlalchemy import sql
+from sqlalchemy.dialects import mysql
 
 #from datetime import datetime
+import datetime
 
 from contact import Contact
 #from expense import Expense
@@ -50,7 +53,7 @@ def init_db():
     db = get_db(INIT_DATABASE_URI)
     
     Session = sessionmaker(bind=db)
-    session = Session()
+    dbsession = Session()
     print('Create session variable.')
 
     # Open the .sql file
@@ -69,8 +72,8 @@ def init_db():
                 # Try to execute statemente and commit it
                 try:
                     print(sql_command)
-                    session.execute(sql_command)
-                    session.commit()
+                    dbsession.execute(sql_command)
+                    dbsession.commit()
                 # Assert in case of error
                 except Exception as err:
                     print(err)
@@ -159,18 +162,24 @@ def logout():
     session.pop('logged_in', False)
     return redirect(url_for('accueil'))
 
-#CRUD section
+#Suplementary functions
 def get_labels(table):
     columns = []
     columnsStr = ''
     for i, key in enumerate(table.c.keys()):
-        columns.append(key)
+        columns.append(' '.join(key.split('_')).title())
         columnsStr += key
         if i != len(table.c.keys()) -1:
             columnsStr += ', '
     columns = tuple(columns)
     return columns
+    
+def format_date(d):
+    d = d.split('/')
+    d = str(d[-1]+'-'+d[-2]+'-'+d[0])
+    return d
 
+#CRUD section
 @app.route('/list/<instance>')
 def hall(instance):
     if session.get('logged_in') != True:
@@ -199,10 +208,10 @@ def show(instance, id):
         db = get_db()
         metadata = MetaData(bind=db)
         Session = sessionmaker(bind=db)
-        sessiondb = Session()
+        dbsession = Session()
         table = Table(str(instance), metadata, autoload=True)
         labels = get_labels(table)
-        result = sessiondb.query(table).filter(table.columns.id == id).first()
+        result = dbsession.query(table).filter(table.columns.id == id).first()
         elements = zip(labels, result)
     except Exception as err:
         print(err)
@@ -221,7 +230,7 @@ def insert(instance):
         table = Table(str(instance), metadata, autoload=True)
         labels = get_labels(table)
         primaryKeyColName = table.primary_key.columns.values()[0].name
-        labels, columns = zip(*filter(lambda x: primaryKeyColName not in x, zip(labels,table.columns)))
+        labels, columns = zip(*filter(lambda x: primaryKeyColName.title() not in x, zip(labels,table.columns)))
         elements = zip(labels, columns)
     except Exception as err:
         print(err)
@@ -248,21 +257,57 @@ def insert_contact():
         try:
             db = get_db()
             Session = sessionmaker(bind=db)
-            session = Session()
+            dbsession = Session()
             contact = Contact(request.form['inputName'], request.form['inputEmail'], request.form['formControlMessage'])
-            session.add(contact)
-            session.commit()
+            dbsession.add(contact)
+            dbsession.commit()
             print('Contact inserted.')
             return render_template('accueil.html', titre='Financial Web', alert='Contact registered. Thank you.')
         except Exception as err:
             print(err)
             return render_template('accueil.html', titre='Financial Web', alert='Contact not registered. Try again.')
 
-@app.route('/insert/add', methods=['POST'])
-def insert_save():
+@app.route('/<instance>/add', methods=['POST'])
+def insert_add(instance):
     if request.method == 'POST':
         try:
-            return render_template('under_construction.html', titre='Financial Web', alert='Operation not available.')
+
+            #recuperar a tabela
+            db = get_db()
+            metadata = MetaData(bind=db)
+            table = Table(str(instance), metadata, autoload=True)
+            primaryKeyColName = table.primary_key.columns.values()[0].name
+            
+            #colocar os dados dos forms correspondentes as colunas
+            values = {}
+            for column in table.columns:
+                if column.name != primaryKeyColName:
+                    if isinstance(column.type, mysql.TIMESTAMP):
+                        values[column.name] = format_date(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
+                    else:    
+                        values[column.name] = request.form[column.name]
+            print(values)
+                    
+            #criar objeto e gravar
+            Session = sessionmaker(bind=db)
+            dbsession = Session()
+            i = table.insert()
+            i = i.values(values)
+            print(i)
+            dbsession.execute(i)
+            dbsession.commit()
+
+            # update
+            #u = update(mytable)
+            #u = u.values({"field3": "new_value"})
+            #u = u.where(mytable.c.id == 33)
+            #session.execute(u)
+
+
+            return redirect(url_for('hall', instance=instance))
+
+            #return render_template('list.html', titre='Financial web - '+instance, instance=instance, elements=result, columns=labels)
+            #return render_template('under_construction.html', titre='Financial Web', alert='Operation not available.')
         except Exception as err:
             print(err)
             return render_template('accueil.html', titre='Financial Web', alert='It was not possible to insert the record. Try again.')
