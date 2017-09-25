@@ -7,18 +7,16 @@ created in 2017-09-11
 
 """
 
-from flask import Flask, g
+from flask import Flask, g, flash
 from flask import render_template, url_for
 from flask import request, session, redirect
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import MetaData, Table, DateTime
-from sqlalchemy import sql
+from sqlalchemy import MetaData, Table
 from sqlalchemy.dialects import mysql
 
 #from datetime import datetime
-import datetime
 
 from contact import Contact
 #from expense import Expense
@@ -117,6 +115,13 @@ def datetime_filter(d): # date = datetime object.
         return True
     except:
         return False
+    
+@app.template_filter('sn')
+def supress_none_filter(val):
+    if not val is None:
+        return val
+    else:
+        return ''
 
       
 #Preambule section
@@ -217,7 +222,7 @@ def show(instance, id):
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
     
-    return render_template('show.html', titre='Financial web - '+instance,  instance=instance, elements=elements)
+    return render_template('remove.html', titre='Financial web - '+instance,  instance=instance, elements=elements)
 
 @app.route('/insert/<instance>')
 def insert(instance):
@@ -242,7 +247,22 @@ def insert(instance):
 def remove(instance, id):
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
-    return render_template('remove.html', titre='Financial web - '+instance, section_titre=instance)
+
+    try:
+        db = get_db()
+        metadata = MetaData(bind=db)
+        Session = sessionmaker(bind=db)
+        dbsession = Session()
+        table = Table(str(instance), metadata, autoload=True)
+        labels = get_labels(table)
+        result = dbsession.query(table).filter(table.columns.id == id).first()
+        elements = zip(labels, result)
+    except Exception as err:
+        print(err)
+        return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
+    
+    
+    return render_template('remove.html', titre='Financial web - '+instance, instance=instance, elements=elements)
 
 @app.route('/update/<instance>/<id>')
 def update(instance, id):
@@ -282,18 +302,17 @@ def insert_add(instance):
             values = {}
             for column in table.columns:
                 if column.name != primaryKeyColName:
-                    if isinstance(column.type, mysql.TIMESTAMP):
-                        values[column.name] = format_date(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
-                    else:    
-                        values[column.name] = request.form[column.name]
-            print(values)
+                    if request.form[column.name] != '':
+                        if isinstance(column.type, mysql.TIMESTAMP):
+                            values[column.name] = format_date(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
+                        else:    
+                            values[column.name] = request.form[column.name]
                     
             #criar objeto e gravar
             Session = sessionmaker(bind=db)
             dbsession = Session()
             i = table.insert()
             i = i.values(values)
-            print(i)
             dbsession.execute(i)
             dbsession.commit()
 
@@ -306,11 +325,33 @@ def insert_add(instance):
 
             return redirect(url_for('hall', instance=instance))
 
-            #return render_template('list.html', titre='Financial web - '+instance, instance=instance, elements=result, columns=labels)
-            #return render_template('under_construction.html', titre='Financial Web', alert='Operation not available.')
         except Exception as err:
             print(err)
             return render_template('accueil.html', titre='Financial Web', alert='It was not possible to insert the record. Try again.')
+
+@app.route('/<instance>/remove', methods=['POST'])
+def remove_save(instance):
+    if request.method == 'POST':
+        #return render_template('accueil.html', titre='Financial Web', alert='Entrou no metodo. '+request.form['id'])
+        
+        try:
+            
+            db = get_db()
+            metadata = MetaData(bind=db)
+            Session = sessionmaker(bind=db)
+            dbsession = Session()
+            table = Table(str(instance), metadata, autoload=True)
+            i = table.delete(table.c.id == request.form['id'])
+            dbsession.execute(i)
+            dbsession.commit()
+
+            return redirect(url_for('hall', instance=instance))
+
+        except Exception as err:
+            print(err)
+            return render_template('accueil.html', titre='Financial Web', alert='It was not possible to insert the record. Try again.')
+
+
 
 if __name__ == '__main__':
 

@@ -31,8 +31,17 @@
     <script>
     if (datefield.type!="date"){ //if browser doesn't support input type="date", initialize date picker widget:
        jQuery(function($){ //on document.ready
-           $(document.getElementsByClassName("datepicker")).datepicker();
+           $(document.getElementsByClassName("datepicker")).datepicker({ dateFormat: "dd/mm/yy" });
        })
+    }
+
+    function ConfirmDelete()
+    {
+      var x = confirm("Are you sure you want to delete?");
+      if (x)
+          return true;
+      else
+        return false;
     }
     </script>
 

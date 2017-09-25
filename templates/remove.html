@@ -1,0 +1,60 @@
+{% extends "accueil.html" %}
+{% block title %}List{% endblock %}
+{% block head %}
+  {{ super() }}
+  <style type="text/css">
+    .important { color: #336699; }
+  </style>
+{% endblock %}
+{% block sidemenu %}
+<div class="container-fluid">
+      <div class="row">
+        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+          <ul class="nav nav-pills flex-column">
+            <li class="nav-item">
+              <a class="nav-link active" href="#">Options <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('insert', instance=instance)}}">New</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="javascript: history.back()">Back</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{{ url_for('under_construction')}}">Export</a>
+            </li>
+          </ul>
+	</nav>
+      </div>
+</div>
+{% endblock %}
+{% block body %}
+
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-sm-6">
+         <h2 class="form-signin-heading">{{instance.title()}}</h2>
+       </div>
+       <div class="col-sm-6 my-auto text-right">
+       </div>
+   </div>
+   <div class="row">
+	<form action="{{url_for('remove_save', instance=instance)}}" method="post">
+           <nav>
+              {% for element in elements %}
+		 {% if element[0]|string == 'Id' %}
+                    <input class="form-control" type="hidden" name="id" value="{{element[1]}}" readonly>
+                 {% endif %}
+	         {% if element[1]|datetime %} 
+                    <p class="text"><span class="font-weight-bold">{{ element[0] }}</span>: {{ element[1].strftime('%d/%m/%Y')|sn }}</p>
+                 {% else %} 
+                    <p class="text"><span class="font-weight-bold">{{ element[0] }}</span>: {{ element[1]|sn }}</p>
+                 {% endif %}
+              {% endfor %}
+           </nav>
+           <button type="submit" class="btn btn-outline-secondary" Onclick="return ConfirmDelete();">Remove</button>
+	</form>
+   </div><!-- /row -->
+</div> <!-- /container -->
+
+{% endblock %}

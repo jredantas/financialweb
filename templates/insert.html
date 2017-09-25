@@ -15,7 +15,7 @@
               <a class="nav-link active" href="#">Options <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="javascript: history.back()">Back</a>
+              <a class="nav-link" href="{{ url_for('hall', instance=instance)}}">Back</a>
             </li>
           </ul>
 	</nav>
@@ -37,8 +37,8 @@
 	   {% for column in columns %}
 		      <div class="form-group">
 		         <label for="inputSubject">{{column[0]}}</label>
-                         {% if str(column[1].type) == 'TIMESTAMP' %}
-		            <input class="form-control" type="date" name="{{column[1].name}}" {% if not column[1].nullable %} required {% endif %} >
+                         {% if column[1].type|string == 'TIMESTAMP' %}
+		            <input class="form-control datepicker" type="date" name="{{column[1].name}}" {% if not column[1].nullable %} required {% endif %} >
                          {% else %}
 		            <input class="form-control" type="text" name="{{column[1].name}}" {% if not column[1].nullable %} required {% endif %} >
                          {% endif %}

@@ -18,7 +18,7 @@
               <a class="nav-link" href="{{ url_for('insert', instance=instance)}}">New</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="javascript: history.back()">Back</a>
+              <a class="nav-link" href="{{ url_for('accueil')}}">Back</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('under_construction')}}">Export</a>
@@ -63,20 +63,20 @@
               <tbody>
 	        {% for element in elements %}
                 <tr>
-                  {% for i in range(element|length) %}
+                  {% for i in range(element|length) %}       
                      {% if element[i]|datetime %} 
-                        <td>{{ element[i].strftime('%d/%m/%Y') }}</td>
+                        <td>{{ element[i].strftime('%d/%m/%Y')|sn }}</td>
                      {% else %} 
                         {% if element[i]|number %}
-                            <td><span class="float-right">{{ element[i] }}</span></td>
+                            <td><span class="float-right">{{ element[i]|sn }}</span></td>
                         {% else %}
-                            <td>{{ element[i] }}</td>
+                            <td>{{ element[i]|sn }}</td>
                         {% endif %}
                      {% endif %}
                   {% endfor %}
         	  <td><a href="{{ url_for('show', instance=instance, id=element[0])}}">Show</a></td>
 	          <td><a href="{{ url_for('under_construction')}}">Edit</a></td>
-	          <td><a href="{{ url_for('under_construction')}}">Remove</a></td>
+	          <td><a href="{{ url_for('remove', instance=instance, id=element[0])}}">Remove</a></td>
 	        </tr>
 		{% endfor %}
               </tbody>
