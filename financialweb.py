@@ -7,7 +7,7 @@ created in 2017-09-11
 
 """
 
-from flask import Flask, g, flash
+from flask import Flask, g
 from flask import render_template, url_for
 from flask import request, session, redirect
 
@@ -16,7 +16,8 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData, Table
 from sqlalchemy.dialects import mysql
 
-#from datetime import datetime
+from datetime import datetime
+import calendar
 
 from contact import Contact
 #from expense import Expense
@@ -351,6 +352,38 @@ def remove_save(instance):
             print(err)
             return render_template('accueil.html', titre='Financial Web', alert='It was not possible to insert the record. Try again.')
 
+#Reports section
+@app.route('/month_expense')
+def month_expense():
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
+    
+    try:
+        db = get_db()
+        metadata = MetaData(bind=db)
+        Session = sessionmaker(bind=db)
+        sessiondb = Session()
+        table = Table(str('expense'), metadata, autoload=True)
+        labels = get_labels(table)
+        filter_from = '1900-01-01'
+        filter_to = '3000-01-01'
+        print(request.args.get('filters'))
+        print(filter_from)
+        print(filter_to)
+        if request.args.get('filters') != None:
+            month_year = request.args.get('filters').split('/')
+            first, last = calendar.monthrange(month_year[-1],month_year[0])
+            filter_from = format_date(first+'/'+request.args.get('filters'))
+            filter_to =  format_date(last+'/'+request.args.get('filters'))
+            print(filter_from)
+            print(filter_to)
+        result = sessiondb.query(table).filter(table.columns.due_date >= filter_from).filter(table.columns.due_date <= filter_to).all()
+        #result = sessiondb.query(table).all()
+    except Exception as err:
+        print(err)
+        return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
+    
+    return render_template('month_expense.html', titre='Financial web - Expense', instance='expense', elements=result, columns=labels)
 
 
 if __name__ == '__main__':
