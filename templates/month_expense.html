@@ -1,5 +1,5 @@
 {% extends "accueil.html" %}
-{% block title %}List{% endblock %}
+{% block title %}Month Expense{% endblock %}
 {% block head %}
   {{ super() }}
   <style type="text/css">
@@ -15,7 +15,7 @@
               <a class="nav-link active" href="#">Options <span class="sr-only">(current)</span></a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('insert', instance=instance)}}">New</a>
+              <a class="nav-link" href="{{ url_for('insert', instance='expense')}}">New</a>
             </li>
             <li class="nav-item">
               <a class="nav-link" href="{{ url_for('accueil')}}">Back</a>
@@ -32,7 +32,7 @@
 <div class="container-fluid">
    <div class="row">
       <div class="col-sm-6">
-         <h2 class="form-signin-heading">{{instance.title()}}</h2>
+         <h2 class="form-signin-heading">{{'month expense'.title()}}</h2>
       </div>
       <div class="col-sm-6 my-auto text-right">
          <div class="dropdown">
@@ -81,9 +81,9 @@
                         {% endif %}
                      {% endif %}
                   {% endfor %}
-        	  <td><a href="{{ url_for('show', instance=instance, id=element[0])}}">Show</a></td>
+        	  <td><a href="{{ url_for('show', instance='expense', id=element[0])}}">Show</a></td>
 	          <td><a href="{{ url_for('under_construction')}}">Edit</a></td>
-	          <td><a href="{{ url_for('remove', instance=instance, id=element[0])}}">Remove</a></td>
+	          <td><a href="{{ url_for('remove', instance='expense', id=element[0])}}">Remove</a></td>
 	        </tr>
 		{% endfor %}
               </tbody>

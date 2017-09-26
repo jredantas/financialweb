@@ -34,25 +34,6 @@
       <div class="col-sm-6">
          <h2 class="form-signin-heading">{{instance.title()}}</h2>
       </div>
-      <div class="col-sm-6 my-auto text-right">
-         <div class="dropdown">
-            <button class="btn btn-light btn-sm align-middle dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-               Filter by Month/Year
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-               <a class="dropdown-item" href="{{ url_for('hall', instance=instance, filters='10/2017')}}">10/2017</a>
-               <a class="dropdown-item" href="{{ url_for('hall', instance=instance, filters='09/2017')}}">09/2017</a>
-               <a class="dropdown-item" href="{{ url_for('hall', instance=instance, filters='08/2017')}}">08/2017</a>
-               <a class="dropdown-item" href="{{ url_for('hall', instance=instance, filters='07/2017')}}">07/2017</a>
-               <a class="dropdown-item" href="{{ url_for('hall', instance=instance, filters='06/2017')}}">06/2017</a>
-               <a class="dropdown-item" href="{{ url_for('hall', instance=instance, filters='05/2017')}}">05/2017</a>
-               <a class="dropdown-item" href="{{ url_for('hall', instance=instance, filters='04/2017')}}">04/2017</a>
-               <a class="dropdown-item" href="{{ url_for('hall', instance=instance, filters='03/2017')}}">03/2017</a>
-               <a class="dropdown-item" href="{{ url_for('hall', instance=instance, filters='02/2017')}}">02/2017</a>
-               <a class="dropdown-item" href="{{ url_for('hall', instance=instance, filters='01/2017')}}">01/2017</a>
-            </div>
-         </div>
-      </div>
    </div>
    <div class="row">
           <div class="table-responsive">

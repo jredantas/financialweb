@@ -353,7 +353,7 @@ def remove_save(instance):
             return render_template('accueil.html', titre='Financial Web', alert='It was not possible to insert the record. Try again.')
 
 #Reports section
-@app.route('/month_expense')
+@app.route('/monthexpense', methods=["GET"])
 def month_expense():
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
@@ -371,10 +371,13 @@ def month_expense():
         print(filter_from)
         print(filter_to)
         if request.args.get('filters') != None:
-            month_year = request.args.get('filters').split('/')
-            first, last = calendar.monthrange(month_year[-1],month_year[0])
+            month, year = request.args.get('filters').split('/')
+            print(month, year)
+            first = '01'
+            week, last = calendar.monthrange(int(year),int(month))
+            print(last)
             filter_from = format_date(first+'/'+request.args.get('filters'))
-            filter_to =  format_date(last+'/'+request.args.get('filters'))
+            filter_to =  format_date(str(last)+'/'+request.args.get('filters'))
             print(filter_from)
             print(filter_to)
         result = sessiondb.query(table).filter(table.columns.due_date >= filter_from).filter(table.columns.due_date <= filter_to).all()
@@ -383,7 +386,7 @@ def month_expense():
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
     
-    return render_template('month_expense.html', titre='Financial web - Expense', instance='expense', elements=result, columns=labels)
+    return render_template('month_expense.html', titre='Financial web - Expense', elements=result, columns=labels)
 
 
 if __name__ == '__main__':
