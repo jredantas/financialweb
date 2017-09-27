@@ -32,8 +32,8 @@ create table enterprise (
 drop table if exists account;
 create table account (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  description INT NOT NULL,
-  type INT NOT NULL --1=bank account/2=credit card
+  description VARCHAR(100) NOT NULL,
+  type INT NOT NULL /* 1=bank account/2=credit card */
 );
 
 drop table if exists expense;
@@ -58,15 +58,5 @@ create table income (
   account_id INT NULL
 );
 
-INSERT INTO expense(company, due_date, amount, installment_group, installment, account_id) 
-VALUES ('Coelce','20171005',212.35,0,1,1);
-INSERT INTO expense(company, due_date, amount, installment_group, installment, account_id) 
-VALUES ('Cagece','20171001',78.56,0,1,1);
-INSERT INTO expense(company, due_date, amount, installment_group, installment, account_id) 
-VALUES ('Vivo','20171017',98.00,0,1,2);
 
-INSERT INTO income(company, pay_date, amount, account_id) 
-VALUES ('SERPRO','20170930',8200.00,1);
-INSERT INTO income(company, pay_date, amount, account_id) 
-VALUES ('DAG','20171001',7500.00,2);
 
