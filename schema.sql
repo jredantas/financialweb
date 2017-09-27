@@ -25,15 +25,15 @@ create table enterprise (
   enterprise_id INT NOT NULL,
   branch_id INT NOT NULL, 
   enterprise_name VARCHAR(100) NOT NULL,
-  branch_name VARCHAR(100) NOT NULL
-  participation_factor NUMERIC NOT NULL
+  branch_name VARCHAR(100) NOT NULL,
+  participation_factor DECIMAL(9,2) NOT NULL
 );
 
 drop table if exists account;
 create table account (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   description INT NOT NULL,
-  type INT NOT NULL, --1=bank account/2=credit card
+  type INT NOT NULL --1=bank account/2=credit card
 );
 
 drop table if exists expense;
