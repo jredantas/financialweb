@@ -47,6 +47,15 @@ create table expense (
   account_id INT NULL
 );
 
+ALTER TABLE expense 
+ADD INDEX fk_expense_account_idx (account_id ASC);
+ALTER TABLE expense 
+ADD CONSTRAINT fk_expense_account
+  FOREIGN KEY (account_id)
+  REFERENCES account (id)
+  ON DELETE NO ACTION
+  ON UPDATE NO ACTION;
+
 drop table if exists income;
 create table income (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,

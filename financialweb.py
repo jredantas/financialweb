@@ -13,7 +13,7 @@ from flask import request, session, redirect
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import MetaData, Table
+from sqlalchemy import MetaData, Table, ForeignKey
 from sqlalchemy.dialects import mysql
 
 #from datetime import datetime
@@ -220,10 +220,20 @@ def hall(instance):
         db = get_db()
         metadata = MetaData(bind=db)
         Session = sessionmaker(bind=db)
-        sessiondb = Session()
+        dbsession = Session()
         table = Table(str(instance), metadata, autoload=True)
+        for c in table.columns:
+            print(c.foreign_keys)
+        fks = table.foreign_keys
+        for fk in fks:
+            print(fk)
+            #table = Table(str(instance), metadata, fk, autoload=True, extend_existing=True)
         labels = get_labels(table)
-        result = sessiondb.query(table).all()
+        #result = dbsession.query(table).all()
+        #criar objeto
+        i = table.select()
+        
+        result = dbsession.execute(i)
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
@@ -346,10 +356,13 @@ def insert_add(instance):
             for column in table.columns:
                 if column.name != primaryKeyColName:
                     if request.form[column.name] != '':
+                        values[column.name] = request.form[column.name]
+                        if isinstance(column.type, mysql.DECIMAL):
+                            values[column.name] = float(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
+                        if isinstance(column.type, mysql.INTEGER):
+                            values[column.name] = int(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
                         if isinstance(column.type, mysql.TIMESTAMP):
                             values[column.name] = format_date(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
-                        else:    
-                            values[column.name] = request.form[column.name]
                     
             #criar objeto e gravar
             Session = sessionmaker(bind=db)
