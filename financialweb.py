@@ -16,11 +16,12 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData, Table
 from sqlalchemy.dialects import mysql
 
-from datetime import datetime
+#from datetime import datetime
 import calendar
+from passlib.hash import sha256_crypt
 
 from contact import Contact
-#from expense import Expense
+from person import Person
 
 app = Flask(__name__)
 
@@ -136,15 +137,24 @@ def accueil():
 def contact():
     return render_template('contact.html', titre='Financial web - Contact us')
 
+
 @app.route('/under_construction')
+@app.route('/list/person')
 def under_construction():
     return render_template('under_construction.html', titre='Financial web')
 
+@app.route('/show/person/<id>')
+@app.route('/remove/person/<id>')
+def under_construction_id(id):
+    return render_template('under_construction.html', titre='Financial web')
+    
 #AUthentication section
 @app.route('/signup')
+@app.route('/insert/person')
 def signup():
     return render_template('signup.html', titre='Financial web - Sign up')
 
+    
 @app.route('/profile')
 def profile():
     if len(session) == 0:
@@ -155,10 +165,26 @@ def profile():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     username = request.form['username']
-    if request.method == 'POST' and username == 'admin':
-        session['username'] = username
-        session['logged_in'] = True
-        return redirect(url_for('accueil'))
+    passwd = request.form['password']
+    if request.method == 'POST': # and username == 'admin':
+        try:
+            db = get_db()
+            metadata = MetaData(bind=db)
+            Session = sessionmaker(bind=db)
+            dbsession = Session()
+            table = Table('person', metadata, autoload=True)
+            result = dbsession.query(table).filter(table.columns.email == username).first()
+            print(result[3])
+            print(result[4])
+            if sha256_crypt.verify( passwd, result[4]): 
+                session['username'] = username
+                session['logged_in'] = True
+                return redirect(url_for('accueil'))
+        except Exception as err:
+            print(err)
+            return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
+
+        
     return render_template('accueil.html', titre='Financial Web', alert='Username or password not correct.')
 
 @app.route('/logout')
@@ -223,7 +249,7 @@ def show(instance, id):
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
     
-    return render_template('remove.html', titre='Financial web - '+instance,  instance=instance, elements=elements)
+    return render_template('show.html', titre='Financial web - '+instance,  instance=instance, elements=elements)
 
 @app.route('/insert/<instance>')
 def insert(instance):
@@ -272,6 +298,24 @@ def update(instance, id):
     return render_template('update.html', titre='Financial web - '+instance, section_titre=instance)
 
 #Model section
+@app.route('/person/insert', methods=['POST'])
+def insert_person():
+    if request.method == 'POST':
+        if request.form['inputPassword1'] != request.form['inputPassword2']:
+             return render_template('signup.html', titre='Financial Web', alert='Password fields must be equal. Try again.')
+
+        try:
+            db = get_db()
+            Session = sessionmaker(bind=db)
+            dbsession = Session()
+            person = Person(request.form['inputName'], request.form['inputCompany'], request.form['inputEmail'], request.form['inputPassword1'])
+            dbsession.add(person)
+            dbsession.commit()
+            return render_template('accueil.html', titre='Financial Web', alert='User registered. Thank you.')
+        except Exception as err:
+            print(err)
+            return render_template('accueil.html', titre='Financial Web', alert='User not registered. Try again.')
+
 @app.route('/contact/add', methods=['POST'])
 def insert_contact():
     if request.method == 'POST':
@@ -282,7 +326,6 @@ def insert_contact():
             contact = Contact(request.form['inputName'], request.form['inputEmail'], request.form['formControlMessage'])
             dbsession.add(contact)
             dbsession.commit()
-            print('Contact inserted.')
             return render_template('accueil.html', titre='Financial Web', alert='Contact registered. Thank you.')
         except Exception as err:
             print(err)
@@ -367,21 +410,13 @@ def month_expense():
         labels = get_labels(table)
         filter_from = '1900-01-01'
         filter_to = '3000-01-01'
-        print(request.args.get('filters'))
-        print(filter_from)
-        print(filter_to)
         if request.args.get('filters') != None:
             month, year = request.args.get('filters').split('/')
-            print(month, year)
             first = '01'
             week, last = calendar.monthrange(int(year),int(month))
-            print(last)
             filter_from = format_date(first+'/'+request.args.get('filters'))
             filter_to =  format_date(str(last)+'/'+request.args.get('filters'))
-            print(filter_from)
-            print(filter_to)
         result = sessiondb.query(table).filter(table.columns.due_date >= filter_from).filter(table.columns.due_date <= filter_to).all()
-        #result = sessiondb.query(table).all()
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')

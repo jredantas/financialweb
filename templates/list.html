@@ -54,12 +54,12 @@
                   {% for i in range(element|length) %}       
                      {% if element[i]|datetime %} 
                         <td>{{ element[i].strftime('%d/%m/%Y')|sn }}</td>
-                     {% else %} 
-                        {% if element[i]|number %}
-                            <td><span class="float-right">{{ element[i]|sn }}</span></td>
-                        {% else %}
-                            <td>{{ element[i]|sn }}</td>
-                        {% endif %}
+                     {% else %}
+                            {% if element[i]|number %}
+                                <td><span class="float-right">{{ element[i]|sn }}</span></td>
+                            {% else %}
+                                <td>{{ element[i]|sn }}</td>
+                            {% endif %}
                      {% endif %}
                   {% endfor %}
         	  <td><a href="{{ url_for('show', instance=instance, id=element[0])}}">Show</a></td>

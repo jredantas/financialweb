@@ -43,6 +43,21 @@
       else
         return false;
     }
+
+    function ConfirmPass()
+    {
+      ok_pass = true;
+      if (document.getElementById("inputPassword1") != document.getElementById("inputPassword2")) {
+         alert("Password fields must have same value.");
+         ok_pass = false;
+      }
+      if (document.getElementById("inputPassword1") < 6 || document.getElementById("inputPassword1") > 14){
+         alert("Password size must be between 6 and 14 characters.");
+         ok_pass = false;
+      }
+      return ok_pass;
+    }
+
     </script>
 
     <title>{{titre}}</title>
