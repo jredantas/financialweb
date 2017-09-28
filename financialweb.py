@@ -174,12 +174,11 @@ def login():
             dbsession = Session()
             table = Table('person', metadata, autoload=True)
             result = dbsession.query(table).filter(table.columns.email == username).first()
-            print(result[3])
-            print(result[4])
-            if sha256_crypt.verify( passwd, result[4]): 
-                session['username'] = username
-                session['logged_in'] = True
-                return redirect(url_for('accueil'))
+            if result is not None:
+                if sha256_crypt.verify( passwd, result[4]): 
+                    session['username'] = username
+                    session['logged_in'] = True
+                    return redirect(url_for('accueil'))
         except Exception as err:
             print(err)
             return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')

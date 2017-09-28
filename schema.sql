@@ -16,7 +16,7 @@ create table person (
   name VARCHAR(100) NOT NULL,
   company VARCHAR(100) NULL,
   email VARCHAR(100) NOT NULL,
-  passwd VARCHAR(8) NOT NULL
+  passwd VARCHAR(128) NOT NULL
 );
 
 drop table if exists enterprise;
