@@ -29,11 +29,13 @@
     </script>
  
     <script>
+
     if (datefield.type!="date"){ //if browser doesn't support input type="date", initialize date picker widget:
        jQuery(function($){ //on document.ready
            $(document.getElementsByClassName("datepicker")).datepicker({ dateFormat: "dd/mm/yy" });
        })
     }
+
 
     function ConfirmDelete()
     {
@@ -57,6 +59,25 @@
       }
       return ok_pass;
     }
+
+    var urlParams = (function(a) {
+        if (a == "") return {};
+        var b = {};
+        for (var i = 0; i < a.length; ++i)
+        {
+            var p=a[i].split('=', 2);
+            if (p.length == 1)
+                b[p[0]] = "";
+            else
+                b[p[0]] = decodeURIComponent(p[1].replace(/\+/g, " "));
+        }
+        return b;
+    })(window.location.search.substr(1).split('&'));
+
+    $(function() {
+        $("#dropdownMenuButton").text(urlParams["filters"]);
+        $("#dropdownMenuButton").val(urlParams["filters"]);
+    });
 
     </script>
 
