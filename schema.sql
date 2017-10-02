@@ -20,12 +20,12 @@ create table person (
 );
 
 drop table if exists enterprise;
-create table enterprise (
+create table family (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-  enterprise_id INT NOT NULL,
-  branch_id INT NOT NULL, 
-  enterprise_name VARCHAR(100) NOT NULL,
-  branch_name VARCHAR(100) NOT NULL,
+  family_id INT NOT NULL,
+  person_id INT NOT NULL, 
+  family_name VARCHAR(100) NOT NULL,
+  /*branch_name VARCHAR(100) NOT NULL,*/
   participation_factor DECIMAL(9,2) NOT NULL
 );
 

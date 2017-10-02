@@ -13,15 +13,15 @@ from flask import request, session, redirect
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy import MetaData, Table, ForeignKey
+from sqlalchemy import MetaData, Table
 from sqlalchemy.dialects import mysql
 
 #from datetime import datetime
 import calendar
 from passlib.hash import sha256_crypt
 
-from contact import Contact
-from person import Person
+from model import Contact, Person
+from model import Expense, Account
 
 app = Flask(__name__)
 
@@ -204,7 +204,7 @@ def get_labels(table):
             columnsStr += ', '
     columns = tuple(columns)
     return columns
-    
+
 def format_date(d):
     d = d.split('/')
     d = str(d[-1]+'-'+d[-2]+'-'+d[0])
@@ -222,18 +222,19 @@ def hall(instance):
         Session = sessionmaker(bind=db)
         dbsession = Session()
         table = Table(str(instance), metadata, autoload=True)
-        for c in table.columns:
-            print(c.foreign_keys)
-        fks = table.foreign_keys
-        for fk in fks:
-            print(fk)
-            #table = Table(str(instance), metadata, fk, autoload=True, extend_existing=True)
+        #for c in table.columns:
+        #    print(c.foreign_keys)
+        #fks = table.foreign_keys
+        #for fk in fks:
+        #    print(fk)
         labels = get_labels(table)
-        #result = dbsession.query(table).all()
+        #table_fk = Table('account', metadata, autoload=True, extend_existing=True)
+        #result = dbsession.query(table, table_fk.columns.description).join(table_fk).all()
+        result = dbsession.query(table).all()
+        print(result)
         #criar objeto
-        i = table.select()
-        
-        result = dbsession.execute(i)
+        #i = table.select()
+        #result = dbsession.execute(i)
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
@@ -434,6 +435,36 @@ def month_expense():
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
     
     return render_template('month_expense.html', titre='Financial web - Expense', elements=result, columns=labels)
+
+@app.route('/expense/family')
+def family_expense():
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
+    
+    try:
+        db = get_db()
+        Session = sessionmaker(bind=db)
+        dbsession = Session()
+        filter_from = '1900-01-01'
+        filter_to = '3000-01-01'
+        if request.args.get('filters') != None:
+            month, year = request.args.get('filters').split('/')
+            first = '01'
+            week, last = calendar.monthrange(int(year),int(month))
+            filter_from = format_date(first+'/'+request.args.get('filters'))
+            filter_to =  format_date(str(last)+'/'+request.args.get('filters'))
+        resultset = dbsession.query(Expense, Account).join(Account).filter(Expense.due_date >= filter_from).filter(Expense.due_date <= filter_to).all()
+        result = []
+        total_amount = 0
+        for res in resultset:
+            total_amount += res[0].amount
+            result.append((res[0].id, res[0].company, res[0].due_date, res[0].amount, str(res[0].installment)+'/'+str(res[0].installment_group), res[1].description))
+        labels = ['Id', 'Company', 'Due date', 'Amount', 'Installment', 'Account']
+    except Exception as err:
+        print(err)
+        return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
+    
+    return render_template('expense_family.html', titre='Financial web - Family Expense', elements=result, columns=labels, total_amount=total_amount, dropdownvalue=request.args.get('filters'))
 
 
 if __name__ == '__main__':
