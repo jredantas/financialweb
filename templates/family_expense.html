@@ -86,7 +86,7 @@
                    <th></th>
                    <th>Total</th>
                    <th></th>
-                   <th>{{ total_amount }}</th>
+                   <th>{{ total_amount[0] }}</th>
                    <th></th>
                    <th></th>
                 </tr>
@@ -94,8 +94,34 @@
             </table>
           </div><!-- /table -->
    </div><!-- /row -->
-	<!--<button type="button" class="btn btn-link">New</button>
-	<button type="button" class="btn btn-link">Back</button>-->
+	   <div class="row">
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                   <th>Total</th>
+                   <th>Parte Adrianna</th>
+                   <th>Pago Adrianna</th>
+                   <th>Diferença Adrianna</th>
+                   <th>Parte Renato</th>
+                   <th>Pago Renato</th>
+                   <th>Diferença Renato</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                   <th>{{ '%0.2f' % total_amount[0]|float }}</th>
+                   <th>{{ '%0.2f' % total_amount[3]|float }}</th>
+                   <th>{{ '%0.2f' % total_amount[1]|float }}</th>
+                   <th>{{ '%0.2f' % total_amount[5]|float }}</th>
+                   <th>{{ '%0.2f' % total_amount[4]|float }}</th>
+                   <th>{{ '%0.2f' % total_amount[2]|float }}</th>
+                   <th>{{ '%0.2f' % total_amount[6]|float }}</th>
+                </tr>
+              </tbody>
+          </div><!-- /table -->
+   </div><!-- /row -->
+
 </div> <!-- /container -->
 
 {% endblock %}

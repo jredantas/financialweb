@@ -458,16 +458,24 @@ def family_expense():
             filter_to =  format_date(str(last)+'/'+request.args.get('filters'))
         resultset = dbsession.query(Expense, Account).join(Account).filter(Expense.due_date >= filter_from).filter(Expense.due_date <= filter_to).all()
         result = []
-        total_amount = 0
+        #array positions: [total, part dri, part re, div dri, div re, dif dri, dif re]
+        total_amount = [0,0,0,0,0,0,0]
         for res in resultset:
-            total_amount += res[0].amount
+            total_amount[0] += float(res[0].amount)
+            total_amount[res[0].account_id]  += float(res[0].amount)
             result.append((res[0].id, res[0].company, res[0].due_date, res[0].amount, str(res[0].installment)+'/'+str(res[0].installment_group), res[1].description))
         labels = ['Id', 'Company', 'Due date', 'Amount', 'Installment', 'Account']
+        total_amount[3] = (total_amount[0] * 0.44)
+        total_amount[4] = (total_amount[0] * 0.56)
+        total_amount[5] = (total_amount[1] - total_amount[3] )
+        total_amount[6] = (total_amount[2] - total_amount[4] )
+        print(total_amount)
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
     
     return render_template('family_expense.html', titre='Financial web - Family Expense', elements=result, columns=labels, total_amount=total_amount, dropdownvalue=request.args.get('filters'))
+
 
 @app.route('/expense/family/chart')
 def family_expense_chart():
