@@ -456,7 +456,7 @@ def family_expense():
             week, last = calendar.monthrange(int(year),int(month))
             filter_from = format_date(first+'/'+request.args.get('filters'))
             filter_to =  format_date(str(last)+'/'+request.args.get('filters'))
-        resultset = dbsession.query(Expense, Account).join(Account).filter(Expense.due_date >= filter_from).filter(Expense.due_date <= filter_to).all()
+        resultset = dbsession.query(Expense, Account).join(Account).filter(Expense.due_date >= filter_from).filter(Expense.due_date <= filter_to).order_by(Expense.account_id).all()
         result = []
         #array positions: [total, part dri, part re, div dri, div re, dif dri, dif re]
         total_amount = [0,0,0,0,0,0,0]
