@@ -1,5 +1,5 @@
 {% extends "accueil.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Family Expense x Month{% endblock %}
 {% block head %}
   {{ super() }}
   <style type="text/css">
@@ -27,6 +27,20 @@
 </div>
 {% endblock %}
 {% block body %}
+<div class="container-fluid">
+   <div class="row">
+      <div class="col-sm-6">
+         <h2 class="form-signin-heading">{{'Family Expenses per Month'}}</h2>
+       </div>
+       <div class="col-sm-6 my-auto text-right">
+       </div>
+   </div>
+   <div class="row">
+      <nav>
+         {{ bar_chart.render()|safe }}
+      </nav>
+   </div><!-- /row -->
+</div> <!-- /container -->
 {% endblock %}
 
 

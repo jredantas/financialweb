@@ -15,10 +15,13 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import MetaData, Table
 from sqlalchemy.dialects import mysql
+from sqlalchemy import func
 
 #from datetime import datetime
 import calendar
 from passlib.hash import sha256_crypt
+import pygal
+from pygal.style import LightStyle
 
 from model import Contact, Person
 from model import Expense, Account
@@ -138,8 +141,8 @@ def contact():
     return render_template('contact.html', titre='Financial web - Contact us')
 
 
-@app.route('/under_construction')
 @app.route('/list/person')
+@app.route('/under_construction')
 def under_construction():
     return render_template('under_construction.html', titre='Financial web')
 
@@ -464,7 +467,40 @@ def family_expense():
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
     
-    return render_template('expense_family.html', titre='Financial web - Family Expense', elements=result, columns=labels, total_amount=total_amount, dropdownvalue=request.args.get('filters'))
+    return render_template('family_expense.html', titre='Financial web - Family Expense', elements=result, columns=labels, total_amount=total_amount, dropdownvalue=request.args.get('filters'))
+
+@app.route('/expense/family/chart')
+def family_expense_chart():
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
+    
+    try:
+        labels = []
+        values = []
+
+        db = get_db()
+        Session = sessionmaker(bind=db)
+        dbsession = Session()
+       
+        resultset = dbsession.query(func.DATE_FORMAT(Expense.due_date, '%Y-%m'), func.sum(Expense.amount)).group_by(func.DATE_FORMAT(Expense.due_date, '%Y-%m')).all()
+        for res in resultset:
+            labels.append(res[0])
+            values.append(res[1])
+
+        # create a bar chart
+        title = 'Family Expenses per Month'
+        bar_chart = pygal.Bar(width=600, height=480,
+                          explicit_size=True, title=title,
+                          style=LightStyle,
+                          disable_xml_declaration=True)
+        bar_chart.x_labels = labels
+        bar_chart.add('Expenses', values)
+    
+    except Exception as err:
+        print(err)
+        return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
+    
+    return render_template('family_expense_chart.html', titre='Financial web - Family Expense', bar_chart=bar_chart)
 
 
 if __name__ == '__main__':
