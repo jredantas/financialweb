@@ -6,7 +6,11 @@ Developer: Jose Renato
 created in 2017-09-11
 
 """
-
+#######################################
+#####                             #####
+#####     Imports section         #####
+#####                             #####
+#######################################
 from flask import Flask, g
 from flask import render_template, url_for
 from flask import request, session, redirect
@@ -17,7 +21,6 @@ from sqlalchemy import MetaData, Table
 from sqlalchemy.dialects import mysql
 from sqlalchemy import func
 
-#from datetime import datetime
 import calendar
 from passlib.hash import sha256_crypt
 import pygal
@@ -26,6 +29,13 @@ from pygal.style import LightStyle
 from model import Contact, Person
 from model import Expense, Account
 
+import pandas as pd
+
+#######################################
+#####                             #####
+#####     Config  section         #####
+#####                             #####
+#######################################
 app = Flask(__name__)
 
 app.config.update(dict(
@@ -43,7 +53,13 @@ app.secret_key = app.config.get('SECRET_KEY')
 
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'+app.config.get('USERNAME')+':'+app.config.get('PASSWORD')+'@localhost:3306/'+app.config.get('DATABASE')
 
-#DBA section
+
+#######################################
+#####                             #####
+#####     DBA     section         #####
+#####                             #####
+#######################################
+
 def connect_db(conn_string=SQLALCHEMY_DATABASE_URI):
     """Connects to the specific database."""
     db = create_engine(conn_string)
@@ -104,7 +120,27 @@ def close_db(error):
     if hasattr(g, 'sql_db'):
         g.sql_db.dispose()
 
-#Custom filters section
+#######################################
+#####                             #####
+#####   Import data section       #####
+#####                             #####
+#######################################
+@app.cli.command('importexpense')
+def import_expense_command():
+    """Import expense data."""
+    print('Import expense data.')
+    import_expense()
+
+def import_expense():
+    print("Starting import...")
+    file = pd.read_csv('planilha.csv') 
+    print("Import finished...")
+
+#######################################
+#####                             #####
+#####   Custom filter section     #####
+#####                             #####
+#######################################
 @app.template_filter('number')
 def number_filter(s):
     try:
@@ -129,7 +165,11 @@ def supress_none_filter(val):
         return ''
 
       
-#Preambule section
+#######################################
+#####                             #####
+#####   Preambule section         #####
+#####                             #####
+#######################################
 @app.route('/')
 def accueil():
     if 'username' in session:
@@ -151,7 +191,12 @@ def under_construction():
 def under_construction_id(id):
     return render_template('under_construction.html', titre='Financial web')
     
-#AUthentication section
+
+#######################################
+#####                             #####
+#####  AUthentication section     #####
+#####                             #####
+#######################################
 @app.route('/signup')
 @app.route('/insert/person')
 def signup():
@@ -196,7 +241,11 @@ def logout():
     session.pop('logged_in', False)
     return redirect(url_for('accueil'))
 
-#Suplementary functions
+#######################################
+#####                             #####
+#####   Suplementary functions    #####
+#####                             #####
+#######################################
 def get_labels(table):
     columns = []
     columnsStr = ''
@@ -213,7 +262,11 @@ def format_date(d):
     d = str(d[-1]+'-'+d[-2]+'-'+d[0])
     return d
 
-#CRUD section
+#######################################
+#####                             #####
+#####   CRUD section              #####
+#####                             #####
+#######################################
 @app.route('/list/<instance>')
 def hall(instance):
     if session.get('logged_in') != True:
@@ -225,19 +278,9 @@ def hall(instance):
         Session = sessionmaker(bind=db)
         dbsession = Session()
         table = Table(str(instance), metadata, autoload=True)
-        #for c in table.columns:
-        #    print(c.foreign_keys)
-        #fks = table.foreign_keys
-        #for fk in fks:
-        #    print(fk)
         labels = get_labels(table)
-        #table_fk = Table('account', metadata, autoload=True, extend_existing=True)
-        #result = dbsession.query(table, table_fk.columns.description).join(table_fk).all()
         result = dbsession.query(table).all()
         print(result)
-        #criar objeto
-        #i = table.select()
-        #result = dbsession.execute(i)
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
@@ -310,7 +353,12 @@ def update(instance, id):
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     return render_template('update.html', titre='Financial web - '+instance, section_titre=instance)
 
-#Model section
+
+#######################################
+#####                             #####
+#####   Model section             #####
+#####                             #####
+#######################################
 @app.route('/person/insert', methods=['POST'])
 def insert_person():
     if request.method == 'POST':
@@ -392,7 +440,7 @@ def insert_add(instance):
 @app.route('/<instance>/remove', methods=['POST'])
 def remove_save(instance):
     if request.method == 'POST':
-        #return render_template('accueil.html', titre='Financial Web', alert='Entrou no metodo. '+request.form['id'])
+        return render_template('accueil.html', titre='Financial Web', alert='Entrou no metodo. '+request.form['id'])
         
         try:
             
@@ -411,8 +459,12 @@ def remove_save(instance):
             print(err)
             return render_template('accueil.html', titre='Financial Web', alert='It was not possible to insert the record. Try again.')
 
-#Reports section
-@app.route('/monthexpense', methods=["GET"])
+#######################################
+#####                             #####
+#####    Reports section          #####
+#####                             #####
+#######################################
+@app.route('/expense/month', methods=["GET"])
 def month_expense():
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
@@ -439,7 +491,7 @@ def month_expense():
     
     return render_template('month_expense.html', titre='Financial web - Expense', elements=result, columns=labels)
 
-@app.route('/expense/family')
+@app.route('/expense/family', methods=["GET"])
 def family_expense():
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
@@ -477,7 +529,7 @@ def family_expense():
     return render_template('family_expense.html', titre='Financial web - Family Expense', elements=result, columns=labels, total_amount=total_amount, dropdownvalue=request.args.get('filters'))
 
 
-@app.route('/expense/family/chart')
+@app.route('/expense/family/chart', methods=["GET"])
 def family_expense_chart():
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
