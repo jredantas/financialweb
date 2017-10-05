@@ -23,13 +23,15 @@ from sqlalchemy import func
 
 import calendar
 from passlib.hash import sha256_crypt
+import numpy as np
+import pandas as pd
+
 import pygal
 from pygal.style import LightStyle
 
 from model import Contact, Person
 from model import Expense, Account
 
-import pandas as pd
 
 #######################################
 #####                             #####
@@ -125,7 +127,7 @@ def close_db(error):
 #####   Import data section       #####
 #####                             #####
 #######################################
-@app.cli.command('importexpense')
+@app.cli.command('import_expense')
 def import_expense_command():
     """Import expense data."""
     print('Import expense data.')
@@ -135,30 +137,34 @@ def import_expense():
     print("Starting import...")
     try:
         df = pd.read_csv('/home/renato/Documents/financialweb/data/despesas.csv', sep=";")
+        #df = pd.read_csv('despesas.csv', sep=";")
 
         db = get_db()
         metadata = MetaData(bind=db)
         table = Table(Expense, metadata, autoload=True)
         primaryKeyColName = table.primary_key.columns.values()[0].name
-        values = {}
         Session = sessionmaker(bind=db)
         dbsession = Session()
 
         for i in range(len(df)):
-            if df.loc[i]['amount'] > 0:
-                values['company']           = df.loc[i]['company']
-                values['amount']            = df.loc[i]['amount']
-                if df.loc[i]['due_date'] != '':
-                    values['due_date']          = format_date(df.loc[i]['due_date'])
-                if df.loc[i]['installment'] != '':
-                    values['installment']       = df.loc[i]['installment']
-                if df.loc[i]['installment_group'] != '':
-                    values['installment_group'] = df.loc[i]['installment_group']
-                values[''] = df.loc[i]['']
-                values[''] = df.loc[i]['']
-                values[''] = df.loc[i]['']
-                values[''] = df.loc[i]['']
-                values[''] = df.loc[i]['']
+            values = {}
+            if float(df.loc[i]['amount']) > 0.00:
+                values['company'] = df.loc[i]['company']
+                values['amount']  = float(df.loc[i]['amount'])
+                if  not pd.isnull(df.loc[i]['due_date']):
+                    values['due_date'] = format_date(df.loc[i]['due_date'])
+                if not np.isnan(df.loc[i]['installment']):
+                    values['installment'] = int(df.loc[i]['installment'])
+                if not np.isnan(df.loc[i]['installment_group']):
+                    values['installment_group'] = int(df.loc[i]['installment_group'])
+                if df.loc[i]['renatopaga'] != '':    
+                    values['account_id'] = 2
+                else:
+                    values['account_id'] = 1
+                values['group1'] = df.loc[i]['group1']
+                values['group2'] = df.loc[i]['group2']
+                values['shared'] = True
+                values['username'] = 'jrdantas@yahoo.com.br'
             """if column.name != primaryKeyColName:
                     if request.form[column.name] != '':
                         values[column.name] = request.form[column.name]
@@ -168,14 +174,13 @@ def import_expense():
                             values[column.name] = int(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
                         if isinstance(column.type, mysql.TIMESTAMP):
                             values[column.name] = format_date(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
-                    
+            """
+            print(values)
             i = table.insert()
             i = i.values(values)
             dbsession.execute(i)
         
         dbsession.commit()
-           """
-
 
     except Exception as err:
         print(err)
