@@ -67,5 +67,9 @@ create table income (
   account_id INT NULL
 );
 
+ALTER TABLE expense ADD COLUMN group1 VARCHAR(50) NULL;
+ALTER TABLE expense ADD COLUMN group2 VARCHAR(50) NULL;
+ALTER TABLE expense ADD COLUMN username VARCHAR(100) NULL;
+ALTER TABLE expense ADD COLUMN private BOOLEAN NULL;
 
 

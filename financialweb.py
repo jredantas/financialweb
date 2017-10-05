@@ -133,7 +133,53 @@ def import_expense_command():
 
 def import_expense():
     print("Starting import...")
-    file = pd.read_csv('planilha.csv') 
+    try:
+        df = pd.read_csv('/home/renato/Documents/financialweb/data/despesas.csv', sep=";")
+
+        db = get_db()
+        metadata = MetaData(bind=db)
+        table = Table(Expense, metadata, autoload=True)
+        primaryKeyColName = table.primary_key.columns.values()[0].name
+        values = {}
+        Session = sessionmaker(bind=db)
+        dbsession = Session()
+
+        for i in range(len(df)):
+            if df.loc[i]['amount'] > 0:
+                values['company']           = df.loc[i]['company']
+                values['amount']            = df.loc[i]['amount']
+                if df.loc[i]['due_date'] != '':
+                    values['due_date']          = format_date(df.loc[i]['due_date'])
+                if df.loc[i]['installment'] != '':
+                    values['installment']       = df.loc[i]['installment']
+                if df.loc[i]['installment_group'] != '':
+                    values['installment_group'] = df.loc[i]['installment_group']
+                values[''] = df.loc[i]['']
+                values[''] = df.loc[i]['']
+                values[''] = df.loc[i]['']
+                values[''] = df.loc[i]['']
+                values[''] = df.loc[i]['']
+            """if column.name != primaryKeyColName:
+                    if request.form[column.name] != '':
+                        values[column.name] = request.form[column.name]
+                        if isinstance(column.type, mysql.DECIMAL):
+                            values[column.name] = float(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
+                        if isinstance(column.type, mysql.INTEGER):
+                            values[column.name] = int(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
+                        if isinstance(column.type, mysql.TIMESTAMP):
+                            values[column.name] = format_date(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
+                    
+            i = table.insert()
+            i = i.values(values)
+            dbsession.execute(i)
+        
+        dbsession.commit()
+           """
+
+
+    except Exception as err:
+        print(err)
+
     print("Import finished...")
 
 #######################################
