@@ -6,7 +6,7 @@ Created on Tue Sep 19 18:23:59 2017
 @author: 09959295800
 """
 
-from sqlalchemy import Column, Integer, String, Date, Numeric
+from sqlalchemy import Column, Integer, String, Date, Numeric, Boolean
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
@@ -53,8 +53,12 @@ class Expense(Base):
     installment = Column(Integer)
     installment_group = Column(Integer)
     account_id = Column( Integer, ForeignKey( 'account.id' ), primary_key = True )
+    group1 = Column(String)
+    group2 = Column(String)
+    username = Column(String)
+    private = Column(Boolean)
 
-    def __init__(self, id, company, due_date, amount, installment, installment_group, account_id):
+    def __init__(self, id, company, due_date, amount, installment, installment_group, account_id, group1, group2, username, private):
         self.id = id
         self.company = company
         self.due_date = due_date
@@ -62,6 +66,10 @@ class Expense(Base):
         self.installment = installment
         self.installment_group = installment_group
         self.account_id = account_id
+        self.group1 = group1
+        self.group2 = group2
+        self.username = username
+        self.private = private
         
 class Account(Base):
     __tablename__ = 'account'

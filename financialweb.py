@@ -141,14 +141,13 @@ def import_expense():
 
         db = get_db()
         metadata = MetaData(bind=db)
-        table = Table(Expense, metadata, autoload=True)
-        primaryKeyColName = table.primary_key.columns.values()[0].name
+        table = Table(Expense.__tablename__, metadata, autoload=True)
         Session = sessionmaker(bind=db)
         dbsession = Session()
 
         for i in range(len(df)):
-            values = {}
             if float(df.loc[i]['amount']) > 0.00:
+                values = {}
                 values['company'] = df.loc[i]['company']
                 values['amount']  = float(df.loc[i]['amount'])
                 if  not pd.isnull(df.loc[i]['due_date']):
@@ -157,28 +156,18 @@ def import_expense():
                     values['installment'] = int(df.loc[i]['installment'])
                 if not np.isnan(df.loc[i]['installment_group']):
                     values['installment_group'] = int(df.loc[i]['installment_group'])
-                if df.loc[i]['renatopaga'] != '':    
+                if not np.isnan(df.loc[i]['renatopaga']):    
                     values['account_id'] = 2
                 else:
                     values['account_id'] = 1
                 values['group1'] = df.loc[i]['group1']
                 values['group2'] = df.loc[i]['group2']
-                values['shared'] = True
+                values['private'] = False
                 values['username'] = 'jrdantas@yahoo.com.br'
-            """if column.name != primaryKeyColName:
-                    if request.form[column.name] != '':
-                        values[column.name] = request.form[column.name]
-                        if isinstance(column.type, mysql.DECIMAL):
-                            values[column.name] = float(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
-                        if isinstance(column.type, mysql.INTEGER):
-                            values[column.name] = int(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
-                        if isinstance(column.type, mysql.TIMESTAMP):
-                            values[column.name] = format_date(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
-            """
-            print(values)
-            i = table.insert()
-            i = i.values(values)
-            dbsession.execute(i)
+                print(values)
+                i = table.insert()
+                i = i.values(values)
+                dbsession.execute(i)
         
         dbsession.commit()
 
