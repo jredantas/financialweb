@@ -589,7 +589,7 @@ def family_expense_chart():
 
         # create a bar chart
         title = 'Family Expenses per Month'
-        bar_chart = pygal.Bar(width=600, height=480,
+        bar_chart = pygal.Bar(width=900, height=500,
                           explicit_size=True, title=title,
                           style=LightStyle,
                           disable_xml_declaration=True)
