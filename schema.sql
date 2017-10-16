@@ -1,7 +1,10 @@
-create database nobdan;
+CREATE DATABASE nobdan
+  DEFAULT CHARACTER SET utf8
+  DEFAULT COLLATE utf8_unicode_ci;
 
 use nobdan;
 
+/*Primeira versão*/
 drop table if exists contact;
 create table contact (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -19,7 +22,7 @@ create table person (
   passwd VARCHAR(128) NOT NULL
 );
 
-drop table if exists enterprise;
+drop table if exists family;
 create table family (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   family_id INT NOT NULL,
@@ -66,10 +69,5 @@ create table income (
   type INT NULL,
   account_id INT NULL
 );
-
-ALTER TABLE expense ADD COLUMN group1 VARCHAR(50) NULL;
-ALTER TABLE expense ADD COLUMN group2 VARCHAR(50) NULL;
-ALTER TABLE expense ADD COLUMN username VARCHAR(100) NULL;
-ALTER TABLE expense ADD COLUMN private BOOLEAN NULL;
 
 

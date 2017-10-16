@@ -320,7 +320,6 @@ def hall(instance):
         table = Table(str(instance), metadata, autoload=True)
         labels = get_labels(table)
         result = dbsession.query(table).all()
-        print(result)
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
@@ -561,7 +560,6 @@ def family_expense():
         total_amount[4] = (total_amount[0] * 0.56)
         total_amount[5] = (total_amount[1] - total_amount[3] )
         total_amount[6] = (total_amount[2] - total_amount[4] )
-        print(total_amount)
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
