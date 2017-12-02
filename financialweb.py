@@ -30,7 +30,7 @@ import pygal
 from pygal.style import LightStyle
 
 from model import Contact, Person
-from model import Expense, Account
+from model import Expense, Account, Income
 
 
 #######################################
@@ -298,7 +298,7 @@ def get_labels(table):
     return columns
 
 def format_date(d):
-    d = d.split('/')
+    d = d.split('-')
     d = str(d[-1]+'-'+d[-2]+'-'+d[0])
     return d
 
@@ -452,8 +452,8 @@ def insert_add(instance):
                             values[column.name] = float(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
                         if isinstance(column.type, mysql.INTEGER):
                             values[column.name] = int(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
-                        if isinstance(column.type, mysql.TIMESTAMP):
-                            values[column.name] = format_date(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
+                        #if isinstance(column.type, mysql.TIMESTAMP):
+                        #    values[column.name] = format_date(request.form[column.name]) #datetime.datetime.strftime(datetime.date(request.form[column.name]), '%Y-%m-%d')
                     
             #criar objeto e gravar
             Session = sessionmaker(bind=db)
@@ -600,7 +600,45 @@ def family_expense_chart():
     
     return render_template('family_expense_chart.html', titre='Financial web - Family Expense', bar_chart=bar_chart)
 
+@app.route('/expense_income_chart', methods=["GET"])
+def expense_income_chart():
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
+    
+    try:
+        labels = []
+        expenses = []
+        incomes = []
+
+        db = get_db()
+        Session = sessionmaker(bind=db)
+        dbsession = Session()
+       
+        rsExpense = dbsession.query(func.DATE_FORMAT(Expense.due_date, '%Y-%m'), func.sum(Expense.amount)).group_by(func.DATE_FORMAT(Expense.due_date, '%Y-%m')).all()
+        for res in rsExpense:
+            labels.append(res[0])
+            expenses.append(res[1])
+
+        rsIncome = dbsession.query(func.DATE_FORMAT(Income.pay_date, '%Y-%m'), func.sum(Income.amount)).group_by(func.DATE_FORMAT(Income.pay_date, '%Y-%m')).all()
+        for rsi in rsIncome:
+            #labels.append(rsi[0])
+            incomes.append(rsi[1])
+
+        # create a bar chart
+        bar_chart = pygal.StackedBar()
+        bar_chart.title = 'Expenses versus Incomes'
+        bar_chart.x_labels = labels
+        bar_chart.add('Expense', expenses)
+        bar_chart.add('Income', incomes)
+        #bar.render_to_file('bar_chart.svg')
+    
+    except Exception as err:
+        print(err)
+        return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
+    
+    return render_template('expense_income_chart.html', titre='Financial web - Family Expense', bar_chart=bar_chart)
 
 if __name__ == '__main__':
 
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    #app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run()

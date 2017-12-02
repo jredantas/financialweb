@@ -66,7 +66,7 @@ create table income (
   pay_date TIMESTAMP NOT NULL,
   amount DECIMAL(9,2) NOT NULL,
   description VARCHAR(100) NULL,
-  type INT NULL,
+  typeof INT NULL,
   account_id INT NULL
 );
 

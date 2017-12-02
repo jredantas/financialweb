@@ -71,6 +71,30 @@ class Expense(Base):
         self.username = username
         self.private = private
         
+class Income(Base):
+    __tablename__ = 'income'
+
+    id = Column(Integer, primary_key=True)
+    company = Column(String)
+    pay_date = Column(Date)
+    amount = Column(Numeric)
+    account_id = Column( Integer, ForeignKey( 'account.id' ), primary_key = True )
+    description = Column(String)
+    typeof = Column(String)
+    username = Column(String)
+    private = Column(Boolean)
+
+    def __init__(self, id, company, pay_date, amount, account_id, description, typeof, username, private):
+        self.id = id
+        self.company = company
+        self.pay_date = pay_date
+        self.amount = amount
+        self.account_id = account_id
+        self.description = description
+        self.typeof = typeof
+        self.username = username
+        self.private = private
+
 class Account(Base):
     __tablename__ = 'account'
 

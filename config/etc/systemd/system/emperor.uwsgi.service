@@ -1,0 +1,19 @@
+[Unit]
+Description=uWSGI Emperor
+After=syslog.target
+
+[Service]
+#$UWSGI --master --emperor /etc/uwsgi/vassals --die-on-term --uid www-data --gid www-data --logto $LOGTO --chmod-socket=777
+ExecStart=/usr/bin/uwsgi --master --emperor /etc/uwsgi/vassals --die-on-term --chmod-socket=777
+# Requires systemd version 211 or newer
+RuntimeDirectory=uwsgi
+Restart=always
+KillSignal=SIGQUIT
+Type=notify
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target
+
+
