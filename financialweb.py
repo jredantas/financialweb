@@ -12,7 +12,7 @@ created in 2017-09-11
 #####                             #####
 #######################################
 from flask import Flask, g
-from flask import render_template, url_for
+from flask import render_template, url_for, send_file
 from flask import request, session, redirect
 
 from sqlalchemy import create_engine
@@ -25,6 +25,8 @@ import calendar
 from passlib.hash import sha256_crypt
 import numpy as np
 import pandas as pd
+
+import matplotlib.pyplot as plt
 
 import pygal
 from pygal.style import LightStyle
@@ -623,20 +625,91 @@ def expense_income_chart():
         for rsi in rsIncome:
             #labels.append(rsi[0])
             incomes.append(rsi[1])
+        
+        diffs = [y-x for x,y in zip(expenses, incomes)]
 
-        # create a bar chart
-        bar_chart = pygal.StackedBar()
-        bar_chart.title = 'Expenses versus Incomes'
-        bar_chart.x_labels = labels
-        bar_chart.add('Expense', expenses)
-        bar_chart.add('Income', incomes)
+        # create a stacked bar chart
+        #bar_chart = pygal.StackedBar()
+        #bar_chart.title = 'Expenses versus Incomes'
+        #bar_chart.x_labels = labels
+        #bar_chart.add('Expense', expenses)
+        #bar_chart.add('Income', incomes)
         #bar.render_to_file('bar_chart.svg')
+        
+        # create a bar chart
+        title = 'Expenses versus Incomes'
+        bar_chart = pygal.Bar(width=900, height=500,
+                          explicit_size=True, title=title,
+                          style=LightStyle,
+                          disable_xml_declaration=True)
+        bar_chart.x_labels = labels
+        bar_chart.add('Expenses', expenses)
+        bar_chart.add('Incomes', incomes)
+        
+        bar_line = pygal.Line()
+        bar_line.add('Difference', diffs)
+        
     
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
     
     return render_template('expense_income_chart.html', titre='Financial web - Family Expense', bar_chart=bar_chart)
+
+@app.route('/mpl_chart', methods=["GET"])
+def mpl_chart():
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
+        
+    return render_template('mpl_chart.html', titre='Financial web - Family Expense')
+
+@app.route('/fig_chart', methods=["GET"])
+def fig_chart():
+    if session.get('logged_in') != True:
+        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
+    
+    try:
+        labels = []
+        expenses = []
+        incomes = []
+
+        db = get_db()
+        Session = sessionmaker(bind=db)
+        dbsession = Session()
+       
+        rsExpense = dbsession.query(func.DATE_FORMAT(Expense.due_date, '%Y-%m'), func.sum(Expense.amount)).group_by(func.DATE_FORMAT(Expense.due_date, '%Y-%m')).all()
+        for res in rsExpense:
+            labels.append(res[0])
+            expenses.append(float(res[1])*0.56)
+
+        rsIncome = dbsession.query(func.DATE_FORMAT(Income.pay_date, '%Y-%m'), func.sum(Income.amount)).group_by(func.DATE_FORMAT(Income.pay_date, '%Y-%m')).all()
+        for rsi in rsIncome:
+            #labels.append(rsi[0])
+            incomes.append(float(rsi[1]))
+        incomes.append(0)
+        incomes.append(0)
+        
+        diffs = [y-x for x,y in zip(expenses, incomes)]
+
+        
+        print('Iniciando matplotlib')
+        
+        chart = plt.figure()
+
+        ax = plt.subplot(111)
+        print('Incluindo despesas')
+        ax.bar(labels, expenses,width=0.4,color='r',align='center')
+        print('incluindo receitas')
+        ax.bar(labels, incomes,width=0.4,color='g',align='center')
+        print('Grafico gerado')
+        plt.show()
+        #chart_url = py.plot_mpl(chart, filename='mpl-multiple-bars')
+
+    except Exception as err:
+        print(err)
+        return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
+    
+    return send_file(chart, mimetype='image/png')
 
 if __name__ == '__main__':
 
