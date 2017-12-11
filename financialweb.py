@@ -682,7 +682,6 @@ def mpl_chart():
 
         rsIncome = dbsession.query(func.DATE_FORMAT(Income.pay_date, '%Y-%m'), func.sum(Income.amount)).group_by(func.DATE_FORMAT(Income.pay_date, '%Y-%m')).all()
         for rsi in rsIncome:
-            #labels.append(rsi[0])
             incomes.append(float(rsi[1]))
         incomes.append(0)
         incomes.append(0)
@@ -690,15 +689,15 @@ def mpl_chart():
         diffs = [y-x for x,y in zip(expenses, incomes)]
 
         
-        print('Iniciando matplotlib')
-        
         chart = plt.figure()
 
         ax = plt.subplot(111)
         ax.bar(labels, expenses,width=0.4,color='r',align='center')
         ax.bar(labels, incomes,width=0.4,color='g',align='center')
 
+        print('Matplotlib Bar created.')
         chart_url = py.plot_mpl(chart, filename='mpl-multiple-bars', auto_open=False)
+        print(chart_url)
         
     except Exception as err:
         print(err)
