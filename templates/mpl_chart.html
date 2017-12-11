@@ -36,9 +36,11 @@
        </div>
    </div>
    <div class="row">
-      <nav>
-         <img src="{{ url_for('fig_chart') }}" alt="Image Placeholder" height="300">
-      </nav>
+      <div>
+    <a href="{{ chart_url }}" target="_blank" title="mpl-multiple-bars" style="display: block; text-align: center;">
+    <img src="{{ chart_url }}" alt="mpl-multiple-bars" style="max-width: 100%;width: 600px;"  width="600" onerror="this.onerror=null;this.src='https://plot.ly/404.png';" /></a>
+    <script data-plotly="jrdantas:0" sharekey-plotly="h9wVrinzd5sWUOxpCB468f" src="https://plot.ly/embed.js" async></script>
+</div>
    </div><!-- /row -->
 </div> <!-- /container -->
 {% endblock %}

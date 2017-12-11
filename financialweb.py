@@ -27,6 +27,8 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
+import plotly
+import plotly.plotly as py
 
 import pygal
 from pygal.style import LightStyle
@@ -57,6 +59,7 @@ app.secret_key = app.config.get('SECRET_KEY')
 
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'+app.config.get('USERNAME')+':'+app.config.get('PASSWORD')+'@localhost:3306/'+app.config.get('DATABASE')
 
+plotly.tools.set_credentials_file(username='jrdantas', api_key='y5upFDHauYrMGRYEemjK')
 
 #######################################
 #####                             #####
@@ -656,15 +659,9 @@ def expense_income_chart():
     
     return render_template('expense_income_chart.html', titre='Financial web - Family Expense', bar_chart=bar_chart)
 
+
 @app.route('/mpl_chart', methods=["GET"])
 def mpl_chart():
-    if session.get('logged_in') != True:
-        return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
-        
-    return render_template('mpl_chart.html', titre='Financial web - Family Expense')
-
-@app.route('/fig_chart', methods=["GET"])
-def fig_chart():
     if session.get('logged_in') != True:
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     
@@ -679,7 +676,7 @@ def fig_chart():
        
         rsExpense = dbsession.query(func.DATE_FORMAT(Expense.due_date, '%Y-%m'), func.sum(Expense.amount)).group_by(func.DATE_FORMAT(Expense.due_date, '%Y-%m')).all()
         for res in rsExpense:
-            labels.append(res[0])
+            labels.append(res[0].split('-')[-1])
             expenses.append(float(res[1])*0.56)
 
         rsIncome = dbsession.query(func.DATE_FORMAT(Income.pay_date, '%Y-%m'), func.sum(Income.amount)).group_by(func.DATE_FORMAT(Income.pay_date, '%Y-%m')).all()
@@ -697,19 +694,16 @@ def fig_chart():
         chart = plt.figure()
 
         ax = plt.subplot(111)
-        print('Incluindo despesas')
         ax.bar(labels, expenses,width=0.4,color='r',align='center')
-        print('incluindo receitas')
         ax.bar(labels, incomes,width=0.4,color='g',align='center')
-        print('Grafico gerado')
-        plt.show()
-        #chart_url = py.plot_mpl(chart, filename='mpl-multiple-bars')
-
+        
+        chart_url = py.plot_mpl(chart, filename='mpl-multiple-bars', auto_open=False)
+        
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
     
-    return send_file(chart, mimetype='image/png')
+    return render_template('mpl_chart.html', titre='Financial web - Family Expense', chart_url=chart_url)
 
 if __name__ == '__main__':
 
