@@ -60,6 +60,7 @@ app.secret_key = app.config.get('SECRET_KEY')
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'+app.config.get('USERNAME')+':'+app.config.get('PASSWORD')+'@localhost:3306/'+app.config.get('DATABASE')
 
 plotly.tools.set_credentials_file(username='jrdantas', api_key='y5upFDHauYrMGRYEemjK')
+plotly.plotly.sign_in(username='jrdantas', api_key='y5upFDHauYrMGRYEemjK')
 
 #######################################
 #####                             #####
@@ -696,7 +697,7 @@ def mpl_chart():
         ax = plt.subplot(111)
         ax.bar(labels, expenses,width=0.4,color='r',align='center')
         ax.bar(labels, incomes,width=0.4,color='g',align='center')
-        
+
         chart_url = py.plot_mpl(chart, filename='mpl-multiple-bars', auto_open=False)
         
     except Exception as err:
