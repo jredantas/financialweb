@@ -306,7 +306,7 @@ def get_labels(table):
     return columns
 
 def format_date(d):
-    d = d.split('-')
+    d = d.split('/')
     d = str(d[-1]+'-'+d[-2]+'-'+d[0])
     return d
 
@@ -708,4 +708,4 @@ def mpl_chart():
 if __name__ == '__main__':
 
     #app.run(host='0.0.0.0', port=8080, debug=True)
-    app.run()
+    app.run(debug=True)
