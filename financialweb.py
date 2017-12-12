@@ -27,6 +27,8 @@ import numpy as np
 import pandas as pd
 
 import matplotlib.pyplot as plt
+plt.switch_backend('agg')
+
 import plotly
 import plotly.plotly as py
 
@@ -59,7 +61,7 @@ app.secret_key = app.config.get('SECRET_KEY')
 
 SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'+app.config.get('USERNAME')+':'+app.config.get('PASSWORD')+'@localhost:3306/'+app.config.get('DATABASE')
 
-plotly.tools.set_credentials_file(username='jrdantas', api_key='y5upFDHauYrMGRYEemjK')
+#plotly.tools.set_credentials_file(username='jrdantas', api_key='y5upFDHauYrMGRYEemjK')
 plotly.plotly.sign_in(username='jrdantas', api_key='y5upFDHauYrMGRYEemjK')
 
 #######################################
@@ -667,42 +669,40 @@ def mpl_chart():
         return render_template('accueil.html', titre='Financial Web', alert='User not logged in.')
     
     try:
-        labels = []
+        labels_e= []
         expenses = []
+        labels_i = []
         incomes = []
 
         db = get_db()
         Session = sessionmaker(bind=db)
         dbsession = Session()
-       
+
         rsExpense = dbsession.query(func.DATE_FORMAT(Expense.due_date, '%Y-%m'), func.sum(Expense.amount)).group_by(func.DATE_FORMAT(Expense.due_date, '%Y-%m')).all()
         for res in rsExpense:
-            labels.append(res[0].split('-')[-1])
+            labels_e.append(res[0].split('-')[-1])
             expenses.append(float(res[1])*0.56)
 
         rsIncome = dbsession.query(func.DATE_FORMAT(Income.pay_date, '%Y-%m'), func.sum(Income.amount)).group_by(func.DATE_FORMAT(Income.pay_date, '%Y-%m')).all()
         for rsi in rsIncome:
+            labels_i.append(rsi[0].split('-')[-1])
             incomes.append(float(rsi[1]))
-        incomes.append(0)
-        incomes.append(0)
-        
+        #incomes.append(0)
+        #incomes.append(0)
+
         diffs = [y-x for x,y in zip(expenses, incomes)]
 
-        
         chart = plt.figure()
-
         ax = plt.subplot(111)
-        ax.bar(labels, expenses,width=0.4,color='r',align='center')
-        ax.bar(labels, incomes,width=0.4,color='g',align='center')
+        ax.bar(labels_e, expenses,width=0.4,color='r',align='center')
+        ax.bar(labels_i, incomes,width=0.4,color='g',align='center')
 
-        print('Matplotlib Bar created.')
-        chart_url = py.plot_mpl(chart, filename='mpl-multiple-bars', auto_open=False)
-        print(chart_url)
-        
+        chart_url = py.plot_mpl(chart, filename='expense_income_monthly', auto_open=False)
+
     except Exception as err:
         print(err)
         return render_template('accueil.html', titre='Financial Web', alert='It was not possible to retrieve the information. Please try again.')
-    
+
     return render_template('mpl_chart.html', titre='Financial web - Family Expense', chart_url=chart_url)
 
 if __name__ == '__main__':

@@ -40,6 +40,7 @@
             </button>
             <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton" id="dropdown-menu">
                <li><a class="dropdown-item" value="" href="{{ url_for('family_expense')}}">Select all</a></li>
+               <li><a class="dropdown-item" value="01/2018" href="{{ url_for('family_expense', filters='12/2017')}}">01/2018</a></li>
                <li><a class="dropdown-item" value="10/2017" href="{{ url_for('family_expense', filters='12/2017')}}">12/2017</a></li>
                <li><a class="dropdown-item" value="10/2017" href="{{ url_for('family_expense', filters='11/2017')}}">11/2017</a></li>
                <li><a class="dropdown-item" value="10/2017" href="{{ url_for('family_expense', filters='10/2017')}}">10/2017</a></li>
