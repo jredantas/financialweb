@@ -12,7 +12,7 @@ created in 2017-09-11
 #####                             #####
 #######################################
 from flask import Flask, g
-from flask import render_template, url_for, send_file
+from flask import render_template, url_for
 from flask import request, session, redirect
 
 from sqlalchemy import create_engine
