@@ -29,8 +29,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 plt.switch_backend('agg')
 
-import plotly
-import plotly.plotly as py
+import chart_studio.plotly
+import chart_studio.plotly.plotly as py
 
 import pygal
 from pygal.style import LightStyle
@@ -58,7 +58,7 @@ app.secret_key = config_data["app"]["secret_key"]
 
 SQLALCHEMY_DATABASE_URI = f'{config_data["db"]["protocol"]}://{config_data["db"]["user"]}:{config_data["db"]["pass"]}@{config_data["db"]["host"]}:{config_data["db"]["port"]}/{config_data["db"]["database"]}'
 
-plotly.plotly.sign_in(username=config_data["plotly"]["username"], api_key=config_data["db"]["api_key"])
+py.sign_in(username=config_data["plotly"]["username"], api_key=config_data["plotly"]["api_key"])
 
 #######################################
 #####                             #####
@@ -704,5 +704,4 @@ def mpl_chart():
 
 if __name__ == '__main__':
 
-    #app.run(host='0.0.0.0', port=8080, debug=True)
-    app.run(debug=True)
+    app.run(host=config_data["app"]["host"], port=config_data["app"]["port"], debug=config_data["app"]["debug"])
