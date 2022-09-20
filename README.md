@@ -45,7 +45,7 @@ Alternatively, a dump version of a full Postgresql database in
 
 ### Setting config files
 
-Open ```config.yaml````and set configuration according user environment. 
+Open ```config.yaml``` and set configuration according user environment. 
 
 
 
@@ -55,6 +55,8 @@ Open ```config.yaml````and set configuration according user environment.
 
 Within /src folder, run:
 
-```python run.py```
+```python financialweb.py```
 
 ### Production mode
+
+TBD
