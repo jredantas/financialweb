@@ -216,6 +216,7 @@ def supress_none_filter(val):
 #######################################
 @app.route('/')
 def accueil():
+    print("entrou")
     if 'username' in session:
        return render_template('accueil.html', titre='Financial web', username=session['username'])
     return render_template('accueil.html', titre='Financial web')
