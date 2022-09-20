@@ -43,3 +43,18 @@ Alternatively, a dump version of a full Postgresql database in
 
 ```./data/nobdan_for_postgres.sql```
 
+### Setting config files
+
+Open ```config.yaml````and set configuration according user environment. 
+
+
+
+## How to Run 
+
+### Dev and test mode
+
+Within /src folder, run:
+
+```python run.py```
+
+### Production mode

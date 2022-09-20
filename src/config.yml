@@ -1,0 +1,17 @@
+app: 
+  secret_key: <add a crazy string here>
+  host: "localhost"
+  port: 5000
+  debug: True
+
+db:
+  protocol: "mysql+pymysql"
+  host: <add host IP>
+  port: <add port>
+  user: <add user>
+  pass: <add password>
+  database: <add database name>
+
+pyplot:
+  username: <add plotly username>
+  api_key: <add plotly API key>

@@ -38,31 +38,27 @@ from pygal.style import LightStyle
 from model import Contact, Person
 from model import Expense, Account, Income
 
+import yaml
 
 #######################################
 #####                             #####
 #####     Config  section         #####
 #####                             #####
 #######################################
+## Read credentials from yaml
+
+
+with open('config.yml', 'r') as file:
+    config_data = yaml.safe_load(file)
+
 app = Flask(__name__)
 
-app.config.update(dict(
-        DATABASE='nobdan',
-        DEBUG=True,
-        SECRET_KEY='_5#y2L"F4Q8z\n\xec]/A0Zr98j/3yX R~XHH!jmN]LWX/,?RT',
-        USERNAME='admin',
-        PASSWORD='admin'
-    ))
-
-#app.config.from_envvar('FLASKR_SETTINGS', silent=True)
-
 # set the secret key.  keep this really secret:
-app.secret_key = app.config.get('SECRET_KEY')
+app.secret_key = config_data["app"]["secret_key"] 
 
-SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://'+app.config.get('USERNAME')+':'+app.config.get('PASSWORD')+'@localhost:3306/'+app.config.get('DATABASE')
+SQLALCHEMY_DATABASE_URI = f'{config_data["db"]["protocol"]}://{config_data["db"]["user"]}:{config_data["db"]["pass"]}@{config_data["db"]["host"]}:{config_data["db"]["port"]}/{config_data["db"]["database"]}'
 
-#plotly.tools.set_credentials_file(username='jrdantas', api_key='y5upFDHauYrMGRYEemjK')
-plotly.plotly.sign_in(username='jrdantas', api_key='y5upFDHauYrMGRYEemjK')
+plotly.plotly.sign_in(username=config_data["plotly"]["username"], api_key=config_data["db"]["api_key"])
 
 #######################################
 #####                             #####
@@ -78,7 +74,7 @@ def connect_db(conn_string=SQLALCHEMY_DATABASE_URI):
 
 def init_db():
     """Initializes the database."""
-    INIT_DATABASE_URI = 'mysql+pymysql://'+app.config.get('USERNAME')+':'+app.config.get('PASSWORD')+'@localhost:3306/'
+    INIT_DATABASE_URI = SQLALCHEMY_DATABASE_URI
     db = get_db(INIT_DATABASE_URI)
     
     Session = sessionmaker(bind=db)
