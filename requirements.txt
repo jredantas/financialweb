@@ -10,4 +10,4 @@ passlib==1.7.4
 pygal==3.0.0
 PyMysql==1.0.2
 sqlalchemy==1.4.41
-yaml==6.0
+pyyaml==6.0
