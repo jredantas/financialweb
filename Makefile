@@ -20,3 +20,10 @@ run: venv   ## Run the server locally using Python & Flask
 test: venv  ## Unit tests for Flask app
 	. $(ENV_DIR)/bin/activate \
 	&& pytest tests/ -v
+
+venv: $(SRC_DIR)/.venv/touchfile
+
+$(ENV_DIR)/.venv/touchfile: ./requirements.txt
+	python3 -m venv $(ENV_DIR)/.venv
+	. $(ENV_DIR)/.venv/bin/activate; pip install -Ur ./requirements.txt
+	touch $(ENV_DIR)/.venv/touchfile
