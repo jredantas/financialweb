@@ -2,3 +2,4 @@
 *.pyc
 financialweb/
 *.yml
+.vscode/

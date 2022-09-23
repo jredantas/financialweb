@@ -7,6 +7,7 @@ matplotlib==3.6.0
 numpy==1.23.3
 pandas==1.5.0
 passlib==1.7.4
+pre-commit==2.20.0
 pygal==3.0.0
 PyMysql==1.0.2
 sqlalchemy==1.4.41

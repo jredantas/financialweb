@@ -4,7 +4,7 @@ ARG srcDir=src
 WORKDIR /app
 COPY requirements.txt .
 
-RUN apt update && apt upgrade
+RUN apt update && apt upgrade -y
 RUN apt install make gcc g++ python3-dev -y
 RUN apt autoremove
 
