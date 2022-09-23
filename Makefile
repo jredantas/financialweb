@@ -21,9 +21,9 @@ test: venv  ## Unit tests for Flask app
 	. $(ENV_DIR)/bin/activate \
 	&& pytest tests/ -v
 
-venv: $(SRC_DIR)/.venv/touchfile
+venv: $(ENV_DIR)/touchfile
 
-$(ENV_DIR)/.venv/touchfile: ./requirements.txt
-	python3 -m venv $(ENV_DIR)/.venv
-	. $(ENV_DIR)/.venv/bin/activate; pip install -Ur ./requirements.txt
-	touch $(ENV_DIR)/.venv/touchfile
+$(ENV_DIR)/touchfile: ./requirements.txt
+	python3.9 -m venv $(ENV_DIR)
+	. $(ENV_DIR)/bin/activate; pip install -Ur ./requirements.txt
+	touch $(ENV_DIR)/touchfile
