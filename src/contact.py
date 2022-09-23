@@ -11,8 +11,9 @@ from sqlalchemy.ext.declarative import declarative_base
 
 Base = declarative_base()
 
+
 class Contact(Base):
-    __tablename__ = 'contact'
+    __tablename__ = "contact"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)

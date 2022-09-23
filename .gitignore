@@ -1,5 +1,5 @@
 *.pem
 *.pyc
-financialweb/
+venv/
 *.yml
 .vscode/

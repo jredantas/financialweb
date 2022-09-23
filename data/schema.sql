@@ -26,7 +26,7 @@ drop table if exists family;
 create table family (
   id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
   family_id INT NOT NULL,
-  person_id INT NOT NULL, 
+  person_id INT NOT NULL,
   family_name VARCHAR(100) NOT NULL,
   /*branch_name VARCHAR(100) NOT NULL,*/
   participation_factor DECIMAL(9,2) NOT NULL
@@ -50,9 +50,9 @@ create table expense (
   account_id INT NULL
 );
 
-ALTER TABLE expense 
+ALTER TABLE expense
 ADD INDEX fk_expense_account_idx (account_id ASC);
-ALTER TABLE expense 
+ALTER TABLE expense
 ADD CONSTRAINT fk_expense_account
   FOREIGN KEY (account_id)
   REFERENCES account (id)
@@ -69,5 +69,3 @@ create table income (
   typeof INT NULL,
   account_id INT NULL
 );
-
-

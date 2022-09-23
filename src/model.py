@@ -14,8 +14,9 @@ from passlib.hash import sha256_crypt
 
 Base = declarative_base()
 
+
 class Contact(Base):
-    __tablename__ = 'contact'
+    __tablename__ = "contact"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -26,9 +27,10 @@ class Contact(Base):
         self.name = name
         self.email = email
         self.message = message
-        
+
+
 class Person(Base):
-    __tablename__ = 'person'
+    __tablename__ = "person"
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -44,7 +46,7 @@ class Person(Base):
 
 
 class Expense(Base):
-    __tablename__ = 'expense'
+    __tablename__ = "expense"
 
     id = Column(Integer, primary_key=True)
     company = Column(String)
@@ -52,13 +54,26 @@ class Expense(Base):
     amount = Column(Numeric)
     installment = Column(Integer)
     installment_group = Column(Integer)
-    account_id = Column( Integer, ForeignKey( 'account.id' ), primary_key = True )
+    account_id = Column(Integer, ForeignKey("account.id"), primary_key=True)
     group1 = Column(String)
     group2 = Column(String)
     username = Column(String)
     private = Column(Boolean)
 
-    def __init__(self, id, company, due_date, amount, installment, installment_group, account_id, group1, group2, username, private):
+    def __init__(
+        self,
+        id,
+        company,
+        due_date,
+        amount,
+        installment,
+        installment_group,
+        account_id,
+        group1,
+        group2,
+        username,
+        private,
+    ):
         self.id = id
         self.company = company
         self.due_date = due_date
@@ -70,21 +85,33 @@ class Expense(Base):
         self.group2 = group2
         self.username = username
         self.private = private
-        
+
+
 class Income(Base):
-    __tablename__ = 'income'
+    __tablename__ = "income"
 
     id = Column(Integer, primary_key=True)
     company = Column(String)
     pay_date = Column(Date)
     amount = Column(Numeric)
-    account_id = Column( Integer, ForeignKey( 'account.id' ), primary_key = True )
+    account_id = Column(Integer, ForeignKey("account.id"), primary_key=True)
     description = Column(String)
     typeof = Column(String)
     username = Column(String)
     private = Column(Boolean)
 
-    def __init__(self, id, company, pay_date, amount, account_id, description, typeof, username, private):
+    def __init__(
+        self,
+        id,
+        company,
+        pay_date,
+        amount,
+        account_id,
+        description,
+        typeof,
+        username,
+        private,
+    ):
         self.id = id
         self.company = company
         self.pay_date = pay_date
@@ -95,8 +122,9 @@ class Income(Base):
         self.username = username
         self.private = private
 
+
 class Account(Base):
-    __tablename__ = 'account'
+    __tablename__ = "account"
 
     id = Column(Integer, primary_key=True)
     description = Column(String)
@@ -107,4 +135,3 @@ class Account(Base):
         self.id = id
         self.description = description
         self.type = type
-
