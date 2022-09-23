@@ -23,13 +23,11 @@ create table expense_group (
 
 ALTER TABLE expense ADD COLUMN expense_group_id INT NULL;
 
-ALTER TABLE expense 
+ALTER TABLE expense
 ADD INDEX fk_expense_group_idx (expense_group_id ASC);
-ALTER TABLE expense 
+ALTER TABLE expense
 ADD CONSTRAINT fk_expense_group
   FOREIGN KEY (expense_group_id)
   REFERENCES expense_group (id)
   ON DELETE NO ACTION
   ON UPDATE NO ACTION;
-
-

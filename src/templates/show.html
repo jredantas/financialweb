@@ -40,7 +40,7 @@
    <div class="row">
       <nav>
          {% for element in elements %}
-	    {% if element[1]|datetime %} 
+	    {% if element[1]|datetime %}
                <p class="text"><span class="font-weight-bold">{{ element[0] }}</span>: {{ element[1].strftime('%d/%m/%Y') }}</p>
             {% else %}
                   <p class="text"><span class="font-weight-bold">{{ element[0] }}</span>: {{ element[1] }}</p>

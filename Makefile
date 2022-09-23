@@ -2,7 +2,7 @@ IMAGE_REG ?= renato
 IMAGE_REPO ?= financialweb
 IMAGE_TAG ?= latest
 
-ENV_DIR := financialweb
+ENV_DIR := venv
 SRC_DIR := src
 
 help:  ## This help message
@@ -12,5 +12,11 @@ image:  ## Build container image from Dockerfile
 	docker build . --file Dockerfile \
 	--tag $(IMAGE_REG)/$(IMAGE_REPO):$(IMAGE_TAG)
 
-run:    ## Run the server locally using Python & Flask
-	docker compose --file financialweb-docker-compose.yaml up
+run: venv   ## Run the server locally using Python & Flask
+	. $(ENV_DIR)/bin/activate \
+	&& cd src \
+	&& python financialweb.py
+
+test: venv  ## Unit tests for Flask app
+	. $(ENV_DIR)/bin/activate \
+	&& pytest tests/ -v

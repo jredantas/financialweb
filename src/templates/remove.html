@@ -45,9 +45,9 @@
 		 {% if element[0]|string == 'Id' %}
                     <input class="form-control" type="hidden" name="id" value="{{element[1]}}" readonly>
                  {% endif %}
-	         {% if element[1]|datetime %} 
+	         {% if element[1]|datetime %}
                     <p class="text"><span class="font-weight-bold">{{ element[0] }}</span>: {{ element[1].strftime('%d/%m/%Y')|sn }}</p>
-                 {% else %} 
+                 {% else %}
                     <p class="text"><span class="font-weight-bold">{{ element[0] }}</span>: {{ element[1]|sn }}</p>
                  {% endif %}
               {% endfor %}

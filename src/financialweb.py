@@ -30,7 +30,6 @@ import matplotlib.pyplot as plt
 
 plt.switch_backend("agg")
 
-import chart_studio.plotly
 import chart_studio.plotly.plotly as py
 
 import pygal
@@ -38,6 +37,8 @@ from pygal.style import LightStyle
 
 from model import Contact, Person
 from model import Expense, Account, Income
+
+from utils import Formatter
 
 import yaml
 
@@ -166,7 +167,7 @@ def import_expense():
                 values["company"] = df.loc[i]["company"]
                 values["amount"] = float(df.loc[i]["amount"])
                 if not pd.isnull(df.loc[i]["due_date"]):
-                    values["due_date"] = format_date(df.loc[i]["due_date"])
+                    values["due_date"] = Formatter.format_date(df.loc[i]["due_date"])
                 if not np.isnan(df.loc[i]["installment"]):
                     values["installment"] = int(df.loc[i]["installment"])
                 if not np.isnan(df.loc[i]["installment_group"]):
@@ -331,12 +332,6 @@ def get_labels(table):
             columnsStr += ", "
     columns = tuple(columns)
     return columns
-
-
-def format_date(d):
-    d = d.split("/")
-    d = str(d[-1] + "-" + d[-2] + "-" + d[0])
-    return d
 
 
 #######################################
@@ -664,8 +659,12 @@ def month_expense():
             month, year = request.args.get("filters").split("/")
             first = "01"
             week, last = calendar.monthrange(int(year), int(month))
-            filter_from = format_date(first + "/" + request.args.get("filters"))
-            filter_to = format_date(str(last) + "/" + request.args.get("filters"))
+            filter_from = Formatter.format_date(
+                first + "/" + request.args.get("filters")
+            )
+            filter_to = Formatter.format_date(
+                str(last) + "/" + request.args.get("filters")
+            )
         result = (
             sessiondb.query(table)
             .filter(table.columns.due_date >= filter_from)
@@ -705,8 +704,12 @@ def family_expense():
             month, year = request.args.get("filters").split("/")
             first = "01"
             week, last = calendar.monthrange(int(year), int(month))
-            filter_from = format_date(first + "/" + request.args.get("filters"))
-            filter_to = format_date(str(last) + "/" + request.args.get("filters"))
+            filter_from = Formatter.format_date(
+                first + "/" + request.args.get("filters")
+            )
+            filter_to = Formatter.format_date(
+                str(last) + "/" + request.args.get("filters")
+            )
         resultset = (
             dbsession.query(Expense, Account)
             .join(Account)

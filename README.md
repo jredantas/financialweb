@@ -2,7 +2,7 @@
 
 ## Description
 
-Financial web is a home financing system. 
+Financial web is a home financing system.
 
 ## Tech stack
 
@@ -10,7 +10,7 @@ Python 3.10.7
 
 Flask
 
-MySQL 
+MySQL
 
 For details, check requirements.txt.
 
@@ -29,13 +29,13 @@ For details, check requirements.txt.
 
 ### Setting database
 
-The system uses a MySQL db. Create one MySQL instance at will. 
+The system uses a MySQL db. Create one MySQL instance at will.
 
-In a MySQL terminal, run the script to create an empty schema. 
+In a MySQL terminal, run the script to create an empty schema.
 
 ```\source ./data/schema.sql```
 
-There is a dump version with a few sample records. 
+There is a dump version with a few sample records.
 
 ```\source ./data/nobdan.sql```
 
@@ -45,11 +45,11 @@ Alternatively, a dump version of a full Postgresql database in
 
 ### Setting config files
 
-Open ```config.yaml``` and set configuration according user environment. 
+Open ```config.yaml``` and set configuration according user environment.
 
 
 
-## How to Run 
+## How to Run
 
 ### Dev and test mode
 

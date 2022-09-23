@@ -4,8 +4,8 @@ CREATE TABLE account (
   id SERIAL primary key,
   description varchar NOT NULL,
   type int NOT NULL);
-  
-  
+
+
 INSERT INTO account VALUES (1,'Adrianna BB',1),(2,'Renato BB',1),(3,'Adrianna Cartão Santander',2),(4,'Renato Cartão BB',2);
 
 DROP TABLE IF EXISTS contact;
@@ -90,7 +90,7 @@ CREATE TABLE family (
   person_id int NOT NULL,
   family_name varchar(100) NOT NULL,
   participation_factor decimal(9,2) NOT NULL
-	
+
 ) ;
 
 --
